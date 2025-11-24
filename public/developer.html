@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Para Desenvolvedores - npm-start.com</title>
+
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      margin:0;
+      background:#1C1C1C; /* Cor Primária (Fundo Escuro) */
+      color:#FFFFFF; /* Cor de Texto Principal */
+    }
+    .container{
+      max-width:900px;
+      margin:20px auto;
+      padding:18px;
+    }
+    .btn{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:8px;
+      background:#FF8C00; /* Cor de Destaque (Laranja) */
+      color:#1C1C1C; /* Cor Primária (Fundo Escuro) para texto do botão */
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+    }
+    .card{
+      background:#2A2A2A; /* Um pouco mais claro que o fundo para contraste */
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 6px 18px rgba(0,0,0,.6);
+      margin-bottom:20px;
+    }
+    .code-block{
+      background:#3A3A3A;
+      padding:15px;
+      border-radius:5px;
+      overflow-x:auto;
+      font-family: monospace;
+      margin:15px 0;
+    }
+    .revenue-info{
+      background: linear-gradient(135deg, #3A3A3A 0%, #4A4A4A 100%);
+      border: 2px solid #007bff;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .revenue-info h3{
+      color: #007bff;
+      margin-top: 0;
+    }
+    h2 {
+      color: #FF8C00;
+      border-bottom: 2px solid #FF8C00;
+      padding-bottom: 10px;
+    }
+    h3 {
+      color: #CCCCCC;
+    }
+    .app-item {
+      background: #3A3A3A;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .app-item h4 {
+      margin-top: 0;
+      color: #FF8C00;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .stat-card {
+      background: #3A3A3A;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #FF8C00;
+    }
+    .stat-label {
+      font-size: 0.9em;
+      color: #CCCCCC;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <a href="/" class="btn">Voltar para Loja</a>
+  
+  <h1>📚 Painel do Desenvolvedor</h1>
+  
+  <div class="revenue-info">
+    <h3>💰 Modelo de Receita</h3>
+    <p>Nossa plataforma oferece um modelo de receita compartilhado:</p>
+    <p><strong>70%</strong> da receita gerada vai para o desenvolvedor</p>
+    <p><strong>30%</strong> da receita gerada vai para a plataforma</p>
+    <p>Receita é gerada através de anúncios em apps gratuitos e vendas de apps pagos.</p>
+    <p><a href="/upload.html" class="btn" style="background:#007bff; color:white; margin-top:10px;">📤 Enviar Novo App</a></p>
+  </div>
+  
+  <!-- Dashboard Section -->
+  <div class="card">
+    <h2>📊 Seus Dados</h2>
+    <div id="developerStats">
+      <p>Carregando estatísticas...</p>
+    </div>
+    
+    <h3>📱 Seus Apps</h3>
+    <div id="developerApps">
+      <p>Carregando apps...</p>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>1. Integração de Anúncios</h2>
+    <p>Para apps gratuitos, a receita é gerada através da exibição de anúncios. Integre nosso pacote de anúncios para começar a gerar receita.</p>
+    
+    <h3>Inclusão dos Scripts</h3>
+    <p>Baixe e inclua os seguintes arquivos em seu app:</p>
+    <div class="code-block">
+      &lt;script src="AdManager.js"&gt;&lt;/script&gt;<br>
+      &lt;script src="ProfitTracker.js"&gt;&lt;/script&gt;
+    </div>
+    
+    <h3>Exibição de Anúncios</h3>
+    <p>Chame a função <code>AdManager.displayAd()</code> nos momentos apropriados:</p>
+    <div class="code-block">
+      // Exibe o anúncio na abertura do app (sujeito ao cooldown de 60s)<br>
+      AdManager.displayAd();<br><br>
+      
+      // Exemplo de chamada na navegação<br>
+      function onTabChange() {<br>
+      &nbsp;&nbsp;// Sua lógica de mudança de aba/view<br>
+      &nbsp;&nbsp;<br>
+      &nbsp;&nbsp;// Exibe o anúncio (sujeito ao cooldown)<br>
+      &nbsp;&nbsp;AdManager.displayAd();<br>
+      }
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>2. Rastreamento de Receita</h2>
+    <p>Para que sua participação de 70% seja calculada corretamente, você deve chamar a função de rastreamento apropriada.</p>
+    
+    <h3>Para Apps Gratuitos</h3>
+    <p>Chame <code>ProfitTracker.trackDownload()</code> quando o app for baixado:</p>
+    <div class="code-block">
+      // Chame esta função após um download bem-sucedido<br>
+      ProfitTracker.trackDownload('ID_DO_SEU_APP', 0.10); // R$0.10 por download
+    </div>
+    
+    <h3>Para Apps Pagos</h3>
+    <p>A receita é automaticamente registrada quando o usuário compra o app. No entanto, você ainda deve chamar a função de rastreamento:</p>
+    <div class="code-block">
+      // Chame esta função após um download bem-sucedido de um app pago<br>
+      ProfitTracker.trackDownload('ID_DO_SEU_APP', PRECO_DO_APP);
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>3. Visualização de Receita</h2>
+    <p>Você pode visualizar suas estatísticas de receita em tempo real:</p>
+    <div class="code-block">
+      // Obtém os dados de receita atuais<br>
+      const revenueData = ProfitTracker.getRevenueData();<br>
+      console.log('Receita Total:', revenueData.totalRevenue);<br>
+      console.log('Sua Participação (70%):', revenueData.developerShare);<br>
+      console.log('Participação da Plataforma (30%):', revenueData.adminShare);<br>
+    </div>
+    
+    <p>Ou chame <code>ProfitTracker.displayProfitStatus()</code> para exibir um resumo no console do navegador.</p>
+  </div>
+  
+  <div class="card">
+    <h2>4. Downloads</h2>
+    <p>Baixe os arquivos necessários para integrar seu app:</p>
+    <p><a href="/integration/AdManager.js" download class="btn">Baixar AdManager.js</a></p>
+    <p><a href="/integration/ProfitTracker.js" download class="btn">Baixar ProfitTracker.js</a></p>
+    <p><a href="/integration/integration_template.html" target="_blank" class="btn">Ver Template Completo</a></p>
+  </div>
+  
+  <div class="card">
+    <h2>5. Suporte</h2>
+    <p>Se você tiver dúvidas sobre a integração, entre em contato com nossa equipe de suporte através do <a href="/mailbox.html" style="color:#FF8C00">sistema de mensagens</a>.</p>
+  </div>
+</div>
+
+<script>
+  // Função para formatar valores monetários
+  function formatCurrency(value) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  }
+  
+  // Função para gerar links de compartilhamento social
+  function getSocialShareLinks(appTitle, appUrl) {
+    const text = `Confira este app incrível: ${appTitle}`;
+    
+    return `
+      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #3A3A3A;">
+        <span style="font-size: 12px; color: #CCCCCC;">Compartilhar:</span>
+        <div style="display: flex; gap: 5px; margin-top: 5px;">
+          <a href="https://wa.me/?text=${encodeURIComponent(text + ' ' + appUrl)}" 
+             style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background-color: #25D366; color: white; text-decoration: none; font-size: 12px; font-weight: 600; transition: all 0.3s ease;"
+             target="_blank" rel="noopener noreferrer" 
+             title="Compartilhar no WhatsApp">W</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}&quote=${encodeURIComponent(text)}" 
+             style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background-color: #4267B2; color: white; text-decoration: none; font-size: 12px; font-weight: 600; transition: all 0.3s ease;"
+             target="_blank" rel="noopener noreferrer" 
+             title="Compartilhar no Facebook">f</a>
+          <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(appUrl)}" 
+             style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background-color: #1DA1F2; color: white; text-decoration: none; font-size: 12px; font-weight: 600; transition: all 0.3s ease;"
+             target="_blank" rel="noopener noreferrer" 
+             title="Compartilhar no Twitter">t</a>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Função para carregar estatísticas do desenvolvedor
+  async function loadDeveloperStats() {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        document.getElementById('developerStats').innerHTML = '<p>Você precisa estar logado para ver suas estatísticas.</p>';
+        return;
+      }
+      
+      const response = await fetch('/api/developer/revenue', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Não autorizado');
+      }
+      
+      const data = await response.json();
+      
+      const statsHtml = `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">${formatCurrency(data.overall.developerShare || 0)}</div>
+            <div class="stat-label">Sua Participação (70%)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${formatCurrency(data.overall.totalRevenue || 0)}</div>
+            <div class="stat-label">Receita Total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${data.appCount || 0}</div>
+            <div class="stat-label">Total de Apps</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${data.total.downloads || 0}</div>
+            <div class="stat-label">Total de Downloads</div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('developerStats').innerHTML = statsHtml;
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas:', error);
+      document.getElementById('developerStats').innerHTML = '<p>Erro ao carregar estatísticas. Por favor, faça login novamente.</p>';
+    }
+  }
+  
+  // Função para carregar apps do desenvolvedor
+  async function loadDeveloperApps() {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        document.getElementById('developerApps').innerHTML = '<p>Você precisa estar logado para ver seus apps.</p>';
+        return;
+      }
+      
+      const response = await fetch('/api/developer/apps', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Não autorizado');
+      }
+      
+      const apps = await response.json();
+      
+      if (apps.length === 0) {
+        document.getElementById('developerApps').innerHTML = '<p>Você ainda não enviou nenhum app.</p>';
+        return;
+      }
+      
+      const appsHtml = apps.map(app => {
+        const appUrl = `${window.location.origin}/app.html?id=${app.id}`;
+        // Check if app has an icon
+        const iconHtml = app.icon ? `<img src="/uploads/${app.icon}" alt="Ícone do App" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; float: right; margin: 0 0 10px 10px;">` : '';
+        return `
+        <div class="app-item">
+          ${iconHtml}
+          <h4>${app.title}</h4>
+          <div><strong>Descrição:</strong> ${app.description || 'Sem descrição'}</div>
+          <div><strong>Plataforma:</strong> ${app.platform}</div>
+          <div><strong>Preço:</strong> ${app.price === 0 ? 'Grátis' : formatCurrency(app.price)}</div>
+          <div><strong>Status:</strong> ${app.approved ? '<span style="color:#4CAF50">Aprovado</span>' : '<span style="color:#FF9800">Pendente</span>'}</div>
+          <div><strong>Downloads:</strong> ${app.downloadCount || 0}</div>
+          <div><strong>Receita Gerada:</strong> ${formatCurrency(app.totalRevenue || 0)}</div>
+          <div><strong>Sua Participação (70%):</strong> ${formatCurrency(app.developerShare || 0)}</div>
+          <div><strong>Enviado em:</strong> ${new Date(app.createdAt).toLocaleDateString('pt-BR')}</div>
+          ${getSocialShareLinks(app.title, appUrl)}
+        </div>
+      `}).join('');
+      
+      document.getElementById('developerApps').innerHTML = appsHtml;
+    } catch (error) {
+      console.error('Erro ao carregar apps:', error);
+      document.getElementById('developerApps').innerHTML = '<p>Erro ao carregar apps. Por favor, faça login novamente.</p>';
+    }
+  }
+  
+  // Carregar dados quando a página carregar
+  document.addEventListener('DOMContentLoaded', function() {
+    loadDeveloperStats();
+    loadDeveloperApps();
+  });
+</script>
+
+</body>
+</html>

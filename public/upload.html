@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Upload de App - npm-start.com</title>
+
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      margin:0;
+      background:#1C1C1C; /* Cor Primária (Fundo Escuro) */
+      color:#FFFFFF; /* Cor de Texto Principal */
+    }
+    .container{
+      max-width:900px;
+      margin:20px auto;
+      padding:18px;
+    }
+    .btn{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:8px;
+      background:#FF8C00; /* Cor de Destaque (Laranja) */
+      color:#1C1C1C; /* Cor Primária (Fundo Escuro) para texto do botão */
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+    }
+    .card{
+      background:#2A2A2A; /* Um pouco mais claro que o fundo para contraste */
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 6px 18px rgba(0,0,0,.6);
+      margin-bottom:20px;
+    }
+    .form-group{
+      margin-bottom:15px;
+    }
+    .form-group label{
+      display:block;
+      margin-bottom:5px;
+      font-weight:bold;
+    }
+    .form-group input, .form-group textarea, .form-group select{
+      width:100%;
+      padding:10px;
+      border-radius:6px;
+      border:1px solid #3A3A3A;
+      background:#1C1C1C;
+      color:#FFFFFF;
+      box-sizing:border-box;
+    }
+    .form-group textarea{
+      min-height:100px;
+      resize:vertical;
+    }
+    .notification {
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+      display: none;
+    }
+    .notification.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .notification.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .screenshot-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .screenshot-preview img {
+      width: 100px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .file-input-container {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    .file-input-container input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    .file-input-label {
+      display: block;
+      padding: 10px;
+      background: #3A3A3A;
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px dashed #5A5A5A;
+    }
+    .file-input-label:hover {
+      background: #4A4A4A;
+    }
+    .price-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .price-section input {
+      flex: 1;
+    }
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-danger:hover {
+      background: #c82333;
+    }
+    .screenshot-container {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #3A3A3A;
+      border-radius: 6px;
+      background: #2A2A2A;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <a href="/developer.html" class="btn">Voltar para Painel</a>
+  
+  <h1>📤 Upload de Novo App</h1>
+  
+  <div class="card">
+    <h2>Informações do App</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">Título do App *</label>
+        <input type="text" id="title" name="title" required placeholder="Nome do seu app">
+      </div>
+      
+      <div class="form-group">
+        <label for="description">Descrição *</label>
+        <textarea id="description" name="description" required placeholder="Descreva seu app em detalhes..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="platform">Plataforma *</label>
+        <select id="platform" name="platform" required>
+          <option value="android">Android (APK)</option>
+          <option value="ios">iOS (IPA)</option>
+          <option value="windows">Windows</option>
+          <option value="mac">Mac</option>
+          <option value="web">Web App</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="price">Preço (R$)</label>
+        <div class="price-section">
+          <input type="number" id="price" name="price" min="0" step="0.01" value="0" placeholder="0.00">
+          <span>Deixe 0 para app gratuito</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Screenshots (3 imagens recomendadas) *</label>
+        <div id="screenshotsContainer">
+          <!-- Screenshots containers will be added here dynamically -->
+        </div>
+        <button type="button" class="btn" id="addScreenshotBtn" style="margin-top: 10px;">➕ Adicionar Screenshot</button>
+        <!-- Old preview element - no longer used -->
+        <div class="screenshot-preview" id="screenshotPreview" style="display: none;"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="icon">Ícone do App (opcional)</label>
+        <div class="file-input-container">
+          <div class="file-input-label">
+            🖼️ Clique para selecionar o ícone do app
+          </div>
+          <input type="file" id="icon" name="icon" accept="image/*">
+        </div>
+        <small>Formatos suportados: PNG, JPG, JPEG, GIF</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="appFile">Arquivo do App (APK, AAB, etc.) *</label>
+        <div class="file-input-container">
+          <div class="file-input-label">
+            📦 Clique para selecionar o arquivo do app
+          </div>
+          <input type="file" id="appFile" name="file" required accept=".apk,.aab,.ipa,.exe,.msi,.dmg,.zip">
+        </div>
+        <small>Formatos suportados: APK, AAB, IPA, EXE, MSI, DMG, ZIP</small>
+      </div>
+      
+      <button type="submit" class="btn">Enviar App para Revisão</button>
+    </form>
+  </div>
+  
+  <!-- Notifications -->
+  <div id="notification" class="notification"></div>
+</div>
+
+<script>
+// Show notification function
+function showNotification(message, type) {
+  const notification = document.getElementById('notification');
+  notification.textContent = message;
+  notification.className = 'notification ' + type;
+  notification.style.display = 'block';
+  
+  // Hide notification after 5 seconds
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 5000);
+}
+
+// Counter for screenshot containers
+let screenshotCount = 0;
+
+// Function to create a new screenshot container
+function createScreenshotContainer() {
+  screenshotCount++;
+  
+  const container = document.createElement('div');
+  container.className = 'screenshot-container';
+  container.style.marginBottom = '15px';
+  container.style.padding = '10px';
+  container.style.border = '1px solid #3A3A3A';
+  container.style.borderRadius = '6px';
+  container.style.backgroundColor = '#2A2A2A';
+  
+  container.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+      <strong>Screenshot ${screenshotCount}</strong>
+      <button type="button" class="btn btn-danger" onclick="removeScreenshotContainer(this)" style="padding: 4px 8px; font-size: 12px; background: #dc3545;">🗑️ Remover</button>
+    </div>
+    <div class="file-input-container" style="margin-bottom: 10px;">
+      <div class="file-input-label">
+        📷 Clique para selecionar screenshot
+      </div>
+      <input type="file" name="screenshot_${screenshotCount}" accept="image/*" onchange="previewScreenshot(this, 'preview_${screenshotCount}')">
+    </div>
+    <div id="preview_${screenshotCount}" class="screenshot-preview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+  `;
+  
+  document.getElementById('screenshotsContainer').appendChild(container);
+}
+
+// Function to remove a screenshot container
+function removeScreenshotContainer(button) {
+  const container = button.closest('.screenshot-container');
+  container.remove();
+  screenshotCount = Math.max(0, screenshotCount - 1);
+}
+
+// Function to preview screenshot
+function previewScreenshot(input, previewId) {
+  const preview = document.getElementById(previewId);
+  preview.innerHTML = '';
+  
+  const file = input.files[0];
+  if (file && file.type.match('image.*')) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.alt = 'Screenshot Preview';
+      img.style.width = '100px';
+      img.style.height = '150px';
+      img.style.objectFit = 'cover';
+      img.style.borderRadius = '6px';
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+// Add initial screenshot containers
+function addInitialScreenshots() {
+  // Add 3 initial screenshot containers as required
+  for (let i = 0; i < 3; i++) {
+    createScreenshotContainer();
+  }
+}
+
+// Initialize screenshot containers when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  addInitialScreenshots();
+  
+  // Add event listener for the add screenshot button
+  document.getElementById('addScreenshotBtn').addEventListener('click', createScreenshotContainer);
+});
+
+// Handle form submission
+document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  // Check if user is logged in
+  const token = localStorage.getItem('token');
+  if (!token) {
+    showNotification('Você precisa estar logado para enviar apps.', 'error');
+    window.location.href = '/login.html';
+    return;
+  }
+  
+  // Validate form
+  const title = document.getElementById('title').value;
+  const description = document.getElementById('description').value;
+  const appFile = document.getElementById('appFile').files[0];
+  
+  // Get all screenshot input elements
+  const screenshotContainers = document.querySelectorAll('.screenshot-container');
+  const screenshotFiles = [];
+  
+  // Collect all screenshot files
+  screenshotContainers.forEach((container, index) => {
+    const input = container.querySelector('input[type="file"]');
+    if (input.files[0]) {
+      screenshotFiles.push(input.files[0]);
+    }
+  });
+  
+  console.log('=== FORM SUBMISSION DEBUG ===');
+  console.log('Title:', title);
+  console.log('Description length:', description.length);
+  console.log('App file:', appFile ? appFile.name : 'None');
+  console.log('Screenshots count:', screenshotFiles.length);
+  
+  // Log each screenshot
+  screenshotFiles.forEach((file, index) => {
+    console.log(`Screenshot ${index}:`, file.name);
+  });
+  
+  if (!title || !description || !appFile) {
+    showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
+    return;
+  }
+  
+  // Validate screenshots count
+  console.log('Validating screenshots count:', screenshotFiles.length);
+  if (screenshotFiles.length < 3) {
+    const errorMsg = `Por favor, selecione pelo menos 3 screenshots. Você selecionou ${screenshotFiles.length} screenshots.`;
+    console.log(errorMsg);
+    showNotification(errorMsg, 'error');
+    return;
+  } else {
+    console.log('Screenshots validation passed');
+  }
+  
+  // Create FormData
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('description', description);
+  formData.append('platform', document.getElementById('platform').value);
+  formData.append('price', document.getElementById('price').value);
+  formData.append('file', appFile);
+  
+  // Append icon if provided
+  const icon = document.getElementById('icon').files[0];
+  if (icon) {
+    console.log('Adding icon:', icon.name);
+    formData.append('icon', icon);
+  }
+  
+  // Append screenshots with debug info - FIXED: Ensure all screenshots are appended
+  console.log(`Appending ${screenshotFiles.length} screenshots to form data:`);
+  for (let i = 0; i < screenshotFiles.length; i++) {
+    console.log(`Appending screenshot ${i}:`, screenshotFiles[i].name);
+    // Create a unique field name for each screenshot to ensure separate containers
+    formData.append('screenshots', screenshotFiles[i]);
+  }
+  
+  try {
+    showNotification('Enviando app... Aguarde.', 'success');
+    
+    // Submit form
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+    
+    const result = await response.json();
+    console.log('Upload response:', result);
+    
+    if (response.ok) {
+      showNotification('App enviado com sucesso! Aguarde a aprovação da equipe.', 'success');
+      // Reset form
+      document.getElementById('uploadForm').reset();
+      document.getElementById('screenshotPreview').innerHTML = '';
+      
+      // Redirect to developer panel after 3 seconds
+      setTimeout(() => {
+        window.location.href = '/developer.html';
+      }, 3000);
+    } else {
+      throw new Error(result.error || 'Erro ao enviar app');
+    }
+  } catch (error) {
+    console.error('Error uploading app:', error);
+    showNotification('Erro ao enviar app: ' + error.message, 'error');
+  }
+});
+</script>
+
+</body>
+</html>

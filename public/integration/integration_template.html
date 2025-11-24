@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template de Integração de Anúncios e Rastreamento</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1C1C1C; color: #FFFFFF; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background-color: #2A2A2A; padding: 30px; border-radius: 10px; }
+        h1 { color: #FF8C00; border-bottom: 2px solid #FF8C00; padding-bottom: 10px; }
+        h2 { color: #CCCCCC; margin-top: 25px; }
+        code { background-color: #3A3A3A; padding: 2px 4px; border-radius: 3px; color: #FF8C00; }
+        pre { background-color: #3A3A3A; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .warning { background-color: #E67E00; color: #1C1C1C; padding: 15px; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        .button { background-color: #FF8C00; color: #1C1C1C; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .revenue-info { background-color: #3A3A3A; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Integração de Anúncios e Rastreamento de Lucros</h1>
+
+    <div class="warning">
+        <h2>⚠️ ACORDO DE PARTICIPAÇÃO NOS LUCROS (30% / 70%)</h2>
+        <p>
+            Este projeto opera sob um acordo de parceria onde o desenvolvedor concorda em repassar <strong>30% dos lucros gerados</strong> para o administrador da plataforma, mantendo <strong>70% dos lucros</strong> para si próprio. O rastreamento de downloads e exibições de anúncios é crucial para a transparência e cálculo dessa participação.
+        </p>
+    </div>
+
+    <h2>1. Inclusão dos Scripts</h2>
+    <p>Inclua os scripts <code>AdManager.js</code> e <code>ProfitTracker.js</code> no seu HTML, preferencialmente antes do fechamento da tag <code>&lt;/body&gt;</code>.</p>
+    <pre>&lt;script src="caminho/para/AdManager.js"&gt;&lt;/script&gt;
+&lt;script src="caminho/para/ProfitTracker.js"&gt;&lt;/script&gt;</pre>
+
+    <h2>2. Inserção do Script de Anúncios</h2>
+    <p>O script de anúncios deve ser chamado nos momentos desejados. Use a função <code>AdManager.displayAd()</code>.</p>
+    
+    <h3>A) Na Abertura do App</h3>
+    <pre>&lt;script&gt;
+    // Exibe o anúncio na abertura do app (sujeito ao cooldown de 60s)
+    AdManager.displayAd();
+&lt;/script&gt;</pre>
+
+    <h3>B) Na Mudança de Aba/View</h3>
+    <p>Chame a função dentro do seu manipulador de eventos de navegação:</p>
+    <pre>// Exemplo de chamada na navegação
+function onTabChange() {
+    // Sua lógica de mudança de aba/view
+    
+    // Exibe o anúncio (sujeito ao cooldown)
+    AdManager.displayAd();
+}</pre>
+
+    <h2>3. Rastreamento de Downloads (Crucial para o Lucro)</h2>
+    <p>Para que a participação de 70% seja calculada corretamente, o desenvolvedor DEVE chamar a função <code>ProfitTracker.trackDownload()</code> sempre que um download do aplicativo for concluído com sucesso.</p>
+    <pre>// Chame esta função após um download bem-sucedido
+ProfitTracker.trackDownload('ID_DO_SEU_APP', 0.50); // R$0.50 por download</pre>
+    <p>Substitua <code>'ID_DO_SEU_APP'</code> por um identificador único do aplicativo.</p>
+
+    <h2>4. Informações de Receita em Tempo Real</h2>
+    <div class="revenue-info">
+        <p><strong>Receita Total Acumulada:</strong> <span id="totalRevenue">R$ 0.00</span></p>
+        <p><strong>Participação do Administrador (30%):</strong> <span id="adminShare">R$ 0.00</span></p>
+        <p><strong>Participação do Desenvolvedor (70%):</strong> <span id="developerShare">R$ 0.00</span></p>
+        <p><strong>Total de Downloads:</strong> <span id="downloadCount">0</span></p>
+    </div>
+
+    <h2>5. Teste de Funcionalidade</h2>
+    <p>Clique no botão abaixo para simular a exibição de um anúncio (verifique o console do navegador para o status do cooldown).</p>
+    <button class="button" onclick="AdManager.displayAd()">Simular Exibição de Anúncio</button>
+    <p>Clique no botão abaixo para simular um download (verifique o console do navegador para o status do rastreamento).</p>
+    <button class="button" onclick="ProfitTracker.trackDownload('APP_TESTE_123', 0.50)">Simular Download (R$0.50)</button>
+    <p><button class="button" onclick="updateRevenueInfo()">Atualizar Informações de Receita</button></p>
+    <p>Verifique o console do navegador (F12) para ver as mensagens de rastreamento do <code>ProfitTracker</code>.</p>
+
+    <script src="ad_manager.js"></script>
+    <script src="ProfitTracker.js"></script>
+    <script>
+        // Exibe o status inicial no console
+        ProfitTracker.displayProfitStatus();
+        
+        // Função para atualizar as informações de receita na página
+        function updateRevenueInfo() {
+            const revenueData = ProfitTracker.getRevenueData();
+            document.getElementById('totalRevenue').textContent = 'R$ ' + revenueData.totalRevenue.toFixed(2);
+            document.getElementById('adminShare').textContent = 'R$ ' + revenueData.adminShare.toFixed(2);
+            document.getElementById('developerShare').textContent = 'R$ ' + revenueData.developerShare.toFixed(2);
+            document.getElementById('downloadCount').textContent = revenueData.downloads;
+        }
+        
+        // Atualiza as informações ao carregar a página
+        updateRevenueInfo();
+    </script>
+</div>
+
+</body>
+</html>

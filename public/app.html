@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Detalhes do App</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192x192.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#FF8C00">
+  <meta name="description" content="Detalhes do aplicativo - npm-start">
+
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      margin:0;
+      background:#1C1C1C; /* Cor Primária (Fundo Escuro) */
+      color:#FFFFFF; /* Cor de Texto Principal */
+    }
+    .container{
+      max-width:900px;
+      margin:20px auto;
+      padding:18px;
+    }
+    .btn{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:8px;
+      background:#FF8C00; /* Cor de Destaque (Laranja) */
+      color:#1C1C1C; /* Cor Primária (Fundo Escuro) para texto do botão */
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+    }
+    .ad-sidebar{
+      background: linear-gradient(135deg, #2A2A2A 0%, #3A3A3A 100%); /* Fundo mais claro que o body */
+      border: 2px solid #FF8C00; /* Cor de Destaque (Laranja) */
+      border-radius: 12px;
+      padding: 15px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .ad-sidebar h4{
+      color: #FF8C00; /* Cor de Destaque (Laranja) */
+      margin-top: 0;
+      font-size: 16px;
+    }
+    .ad-sidebar a{
+      display: block;
+      padding: 8px 15px;
+      background: #FF8C00; /* Cor de Destaque (Laranja) */
+      color: #1C1C1C; /* Cor Primária (Fundo Escuro) para texto do botão */
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 8px 0;
+      transition: all 0.3s ease;
+    }
+    .ad-sidebar a:hover{
+      background: #E67E00; /* Laranja um pouco mais escuro para hover */
+      transform: translateX(5px);
+    }
+    .app-stats {
+      background: #3A3A3A;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+    .payment-section {
+      background: #3A3A3A;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      text-align: center;
+    }
+    .notification {
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+      display: none;
+    }
+    .notification.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .notification.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    /* Social sharing styles */
+    .social-share {
+      background: #3A3A3A;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      text-align: center;
+    }
+    .social-share h3 {
+      margin-top: 0;
+      color: #FF8C00;
+    }
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .social-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .social-button:hover {
+      transform: translateY(-2px);
+    }
+    .social-button i {
+      margin-right: 5px;
+    }
+    .whatsapp { background-color: #25D366; color: white; }
+    .facebook { background-color: #4267B2; color: white; }
+    .twitter { background-color: #1DA1F2; color: white; }
+    .instagram { background-color: #E1306C; color: white; }
+    .telegram { background-color: #0088cc; color: white; }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <a href="/" class="btn">Voltar</a>
+  
+  <!-- Anúncios Laterais -->
+  <div class="ad-sidebar">
+    <h4>🛒 Ofertas Especiais</h4>
+    <a href="https://otieu.com/4/9241921" target="_blank" rel="noopener noreferrer">Ofertas Premium</a>
+    <a href="https://otieu.com/4/9241941" target="_blank" rel="noopener noreferrer">Produtos Selecionados</a>
+    <a href="https://otieu.com/4/9241934" target="_blank" rel="noopener noreferrer">Melhores Preços</a>
+  </div>
+  
+  <div id="info"></div>
+  
+  <!-- Notifications -->
+  <div id="notification" class="notification"></div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+
+// Show notification function
+function showNotification(message, type) {
+  const notification = document.getElementById('notification');
+  notification.textContent = message;
+  notification.className = 'notification ' + type;
+  notification.style.display = 'block';
+  
+  // Hide notification after 5 seconds
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 5000);
+}
+
+// Função para compartilhar em redes sociais
+function shareApp(appTitle, appUrl) {
+  const text = `Confira este app incrível: ${appTitle}`;
+  
+  // WhatsApp
+  document.getElementById('whatsapp-share').href = `https://wa.me/?text=${encodeURIComponent(text + ' ' + appUrl)}`;
+  
+  // Facebook
+  document.getElementById('facebook-share').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}&quote=${encodeURIComponent(text)}`;
+  
+  // Twitter
+  document.getElementById('twitter-share').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(appUrl)}`;
+  
+  // Instagram
+  document.getElementById('instagram-share').href = `https://www.instagram.com/?url=${encodeURIComponent(appUrl)}`;
+  
+  // Telegram
+  document.getElementById('telegram-share').href = `https://t.me/share/url?url=${encodeURIComponent(appUrl)}&text=${encodeURIComponent(text)}`;
+}
+
+async function load(){
+  const res = await fetch("/api/apps");
+  const apps = await res.json();
+
+  const a = apps.find(x => x.id === id) || null;
+
+  if (!a){
+    document.getElementById("info").innerHTML = "<p>App não encontrado.</p>";
+    return;
+  }
+
+  // Get current URL for sharing
+  const appUrl = window.location.href;
+  
+  // Parse screenshots if available
+  let screenshotsHtml = '';
+  if (a.screenshots) {
+    try {
+      const screenshots = JSON.parse(a.screenshots);
+      if (screenshots.length > 0) {
+        screenshotsHtml = `
+          <div style="margin: 20px 0;">
+            <h3>Screenshots</h3>
+            <div style="display: flex; gap: 10px; overflow-x: auto; padding: 10px 0;">
+              ${screenshots.map(screenshot => `
+                <img src="/uploads/${screenshot}" alt="Screenshot" style="width: 150px; height: 250px; object-fit: cover; border-radius: 8px;">
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+    } catch (e) {
+      console.error('Error parsing screenshots:', e);
+    }
+  }
+
+  // Check if app has an icon
+  const iconHtml = a.icon ? `<img src="/uploads/${a.icon}" alt="Ícone do App" style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px; float: right; margin: 0 0 10px 10px;">` : '';
+  
+  document.getElementById("info").innerHTML = `
+    ${iconHtml}
+    <h1>${a.title}</h1>
+    <div style="color:#CCCCCC">Plataforma: ${a.platform} • Enviado: ${new Date(a.createdAt).toLocaleString()}</div>
+    <p>${a.description}</p>
+    ${screenshotsHtml}
+    <p>Preço: ${a.price === 0 ? "Grátis" : "R$ " + a.price.toFixed(2)}</p>
+    
+    <div class="app-stats">
+      <div>Downloads: ${a.downloadCount || 0}</div>
+      <div>Receita Total: R$ ${(a.totalRevenue || 0).toFixed(2)}</div>
+    </div>
+    
+    <!-- Social Sharing -->
+    <div class="social-share">
+      <h3>Compartilhar este App</h3>
+      <p>Compartilhe este app com seus amigos e colegas!</p>
+      <div class="social-buttons">
+        <a id="whatsapp-share" class="social-button whatsapp" target="_blank" rel="noopener noreferrer">
+          WhatsApp
+        </a>
+        <a id="facebook-share" class="social-button facebook" target="_blank" rel="noopener noreferrer">
+          Facebook
+        </a>
+        <a id="twitter-share" class="social-button twitter" target="_blank" rel="noopener noreferrer">
+          Twitter
+        </a>
+        <a id="instagram-share" class="social-button instagram" target="_blank" rel="noopener noreferrer">
+          Instagram
+        </a>
+        <a id="telegram-share" class="social-button telegram" target="_blank" rel="noopener noreferrer">
+          Telegram
+        </a>
+      </div>
+    </div>
+
+    ${a.price > 0 ? 
+      `<div class="payment-section">
+        <button id="payButton" class="btn">Comprar App (R$ ${a.price.toFixed(2)})</button>
+        <div id="paymentStatus" style="margin-top: 10px;"></div>
+      </div>` : 
+      `<a class="btn" href="/download/free/${a.filename}" onclick="trackDownload('${a.id}')">Baixar</a>`
+    }
+  `;
+
+  // Initialize social sharing links
+  shareApp(a.title, appUrl);
+
+  // Adicionar evento de clique ao botão de pagamento, se for um app pago
+  if (a.price > 0) {
+    document.getElementById("payButton").addEventListener("click", () => initiatePayment(a.id));
+  }
+}
+
+async function initiatePayment(appId) {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showNotification("Você precisa estar logado para comprar apps.", "error");
+      window.location.href = "/login.html";
+      return;
+    }
+
+    // Iniciar o processo de pagamento
+    const res = await fetch("/api/pay/" + appId, {
+      method: "POST",
+      headers: { 
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.error || "Erro ao iniciar pagamento");
+    }
+
+    // Verificar se há métodos de pagamento disponíveis
+    if (data.availablePaymentMethods && data.availablePaymentMethods.length > 0) {
+      // Verificar se PIX está disponível
+      const pixAvailable = data.availablePaymentMethods.some(method => method.id === 'pix');
+      
+      if (pixAvailable) {
+        // Mostrar opções de pagamento
+        showPaymentOptions(data, appId);
+        return;
+      } else if (data.availablePaymentMethods.length === 1 && data.availablePaymentMethods[0].id === 'card') {
+        // Apenas cartão disponível, mostrar mensagem e redirecionar
+        showNotification("Apenas pagamento por cartão está disponível no momento. Você será redirecionado para a página de pagamento.", "info");
+        setTimeout(() => {
+          window.location.href = data.paymentUrl;
+        }, 3000);
+        return;
+      }
+    }
+
+    // Redirecionar o usuário para a página de pagamento da SumUp (método padrão)
+    if (data.paymentUrl) {
+      window.location.href = data.paymentUrl;
+    } else {
+      showNotification("Erro: URL de pagamento não disponível", "error");
+    }
+  } catch (error) {
+    console.error("Error initiating payment:", error);
+    showNotification("Erro ao iniciar pagamento: " + error.message, "error");
+  }
+}
+
+function showPaymentOptions(paymentData, appId) {
+  // Criar modal com opções de pagamento
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  `;
+  
+  modal.innerHTML = `
+    <div style="background: #2A2A2A; padding: 30px; border-radius: 10px; max-width: 500px; width: 90%;">
+      <h3 style="color: #FF8C00; margin-top: 0;">Escolha o método de pagamento</h3>
+      <p>App: ${paymentData.appName}</p>
+      <p>Valor: R$ ${paymentData.amount.toFixed(2)}</p>
+      
+      <div style="margin: 20px 0;">
+        <button id="cardPayment" style="display: block; width: 100%; padding: 15px; margin: 10px 0; background: #FF8C00; color: #1C1C1C; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+          Pagar com Cartão de Crédito
+        </button>
+        
+        <button id="pixPayment" style="display: block; width: 100%; padding: 15px; margin: 10px 0; background: #00994C; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+          Pagar com PIX
+        </button>
+      </div>
+      
+      <button id="closeModal" style="display: block; width: 100%; padding: 10px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Cancelar
+      </button>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Eventos dos botões
+  document.getElementById('cardPayment').addEventListener('click', () => {
+    window.location.href = paymentData.paymentUrl;
+  });
+  
+  document.getElementById('pixPayment').addEventListener('click', () => {
+    processPixPayment(paymentData.checkoutId);
+  });
+  
+  document.getElementById('closeModal').addEventListener('click', () => {
+    document.body.removeChild(modal);
+  });
+  
+  // Fechar ao clicar fora do modal
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      document.body.removeChild(modal);
+    }
+  });
+}
+
+async function processPixPayment(checkoutId) {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showNotification("Você precisa estar logado para comprar apps.", "error");
+      window.location.href = "/login.html";
+      return;
+    }
+
+    // Obter os artefatos do PIX
+    const res = await fetch(`/api/pay/${checkoutId}/pix-artifacts`, {
+      headers: { 
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.error || "Erro ao obter informações do PIX");
+    }
+
+    // Mostrar o QR Code do PIX
+    showPixQrCode(data.pixArtifacts, checkoutId);
+  } catch (error) {
+    console.error("Error processing PIX payment:", error);
+    showNotification("Erro ao processar pagamento via PIX: " + error.message, "error");
+  }
+}
+
+function showPixQrCode(artifacts, checkoutId) {
+  // Encontrar o código PIX e o QR Code
+  const qrCodeArtifact = artifacts.find(a => a.name === 'barcode');
+  const codeArtifact = artifacts.find(a => a.name === 'code');
+  
+  if (!qrCodeArtifact || !codeArtifact) {
+    showNotification("Erro: Informações do PIX não disponíveis", "error");
+    return;
+  }
+  
+  // Criar modal com o QR Code
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  `;
+  
+  modal.innerHTML = `
+    <div style="background: #2A2A2A; padding: 30px; border-radius: 10px; max-width: 500px; width: 90%; text-align: center;">
+      <h3 style="color: #00994C; margin-top: 0;">Pagamento via PIX</h3>
+      <p>Escaneie o QR Code abaixo com o seu aplicativo bancário:</p>
+      
+      <div style="margin: 20px 0;">
+        <img src="${qrCodeArtifact.location}" alt="QR Code PIX" style="max-width: 200px;">
+      </div>
+      
+      <p>Ou copie o código PIX:</p>
+      <div style="background: #333; padding: 10px; border-radius: 5px; margin: 10px 0; word-break: break-all;">
+        ${codeArtifact.content}
+      </div>
+      
+      <button id="copyCode" style="padding: 10px 15px; background: #00994C; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0;">
+        Copiar Código
+      </button>
+      
+      <p style="font-size: 14px; color: #999;">
+        Após o pagamento, você receberá um e-mail com o link para download.
+      </p>
+      
+      <button id="closeModal" style="padding: 10px 15px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Fechar
+      </button>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Eventos dos botões
+  document.getElementById('copyCode').addEventListener('click', () => {
+    navigator.clipboard.writeText(codeArtifact.content);
+    showNotification("Código PIX copiado para a área de transferência!", "success");
+  });
+  
+  document.getElementById('closeModal').addEventListener('click', () => {
+    document.body.removeChild(modal);
+  });
+  
+  // Fechar ao clicar fora do modal
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      document.body.removeChild(modal);
+    }
+  });
+}
+
+// Função para mostrar mensagem de processamento
+async function showProcessingMessage() {
+  // Esta função mostra uma mensagem de espera enquanto aguarda o webhook da SumUp
+  const urlParams = new URLSearchParams(window.location.search);
+  const checkoutId = urlParams.get('checkout_id');
+  
+  if (checkoutId) {
+    // Mostrar mensagem de espera
+    document.getElementById("paymentStatus").innerHTML = `<p>⏳ Aguardando confirmação do pagamento...</p><p>Você receberá um e-mail com o link para download assim que o pagamento for confirmado.</p>`;
+  }
+}
+
+async function trackDownload(appId) {
+  try {
+    // Track the download for revenue calculation
+    const token = localStorage.getItem("token");
+    if (token) {
+      await fetch(`/api/apps/${appId}/download`, {
+        method: "POST",
+        headers: { 
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        }
+      });
+    }
+    
+    // Show ad when downloading
+    showAd();
+  } catch (error) {
+    console.error("Error tracking download:", error);
+  }
+}
+
+function showAd() {
+  // In a real implementation, this would show an actual ad
+  // For now, we'll just show an alert
+  alert("Exibindo anúncio antes do download...");
+}
+
+// Carregar os dados do app
+load();
+
+// Mostrar mensagem de processamento quando a página carrega
+showProcessingMessage();
+</script>
+
+<script>
+// Registrar o Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker registrado com sucesso:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('Falha ao registrar o Service Worker:', error);
+      });
+  });
+}
+</script>
+
+</body>
+</html>

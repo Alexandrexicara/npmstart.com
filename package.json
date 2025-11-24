@@ -1,0 +1,36 @@
+{
+  "name": "email-system",
+  "version": "1.0.0",
+  "description": "Este repositório é uma versão completa e integrada do protótipo da plataforma npm-start.com com: - Loja de apps (upload, listagem, download) - Autenticação de usuário com e-mail @npmstart.com - Webmail simples (envio via SMTP e leitura via IMAP proxy) - Templates de e-mail e integração com provedores transacionais (SendGrid, SMTP) - Docker-compose template para executar um servidor de e-mail (Mailu) — exemplo apenas",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@sumup/sdk": "^0.0.6",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.19",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "imap-simple": "^1.6.3",
+    "jsonwebtoken": "^9.0.2",
+    "mailparser": "^3.6.5",
+    "mongoose": "^8.3.2",
+    "multer": "^2.0.2",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^7.0.10",
+    "sqlite3": "^5.1.7",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "mailhog": "^4.2.0",
+    "nodemon": "^3.1.11"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

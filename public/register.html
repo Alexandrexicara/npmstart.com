@@ -1,0 +1,23 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Criar Conta</title>
+<style>body{font-family:Arial,Helvetica,sans-serif;background:#1C1C1C;color:#FFFFFF}.box{max-width:420px;margin:40px auto;padding:20px;background:#2A2A2A;border-radius:8px}input,textarea{width:100%;padding:8px;margin:6px 0;border-radius:6px;border:1px solid #3A3A3A;background:#1C1C1C;color:#FFFFFF}button{background:#FF8C00;color:#1C1C1C;padding:10px 15px;border-radius:8px;border:none;cursor:pointer;font-weight:600;width:100%;margin-top:10px}</style></head><body>
+<div class="box"><h2>Criar Conta @npmstart.com</h2>
+<form id="f">
+<label>Nome</label><input name="name" required/>
+<label>Escolha um login (antes do @)</label><input name="emailLocal" required/>
+<label>Senha</label><input type="password" name="password" required/>
+<button type="submit">Criar Conta</button>
+</form>
+<p id="msg"></p>
+</div>
+<script>
+document.getElementById('f').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const body = { name: fd.get('name'), emailLocal: fd.get('emailLocal'), password: fd.get('password') };
+  const r = await fetch('/api/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (j.ok) { alert('Conta criada: ' + j.user.email); location.href='/login.html'; }
+  else document.getElementById('msg').innerText = j.error || JSON.stringify(j);
+});
+</script>
+</body></html>

@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Painel de Administração - npm-start.com</title>
+
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      margin:0;
+      background:#1C1C1C; /* Cor Primária (Fundo Escuro) */
+      color:#FFFFFF; /* Cor de Texto Principal */
+    }
+    .container{
+      max-width:1000px;
+      margin:20px auto;
+      padding:18px;
+    }
+    .btn{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:8px;
+      background:#FF8C00; /* Cor de Destaque (Laranja) */
+      color:#1C1C1C; /* Cor Primária (Fundo Escuro) para texto do botão */
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+    }
+    .btn-danger{
+      background:#dc3545;
+      color:#fff;
+    }
+    .btn-success{
+      background:#28a745;
+      color:#fff;
+    }
+    .btn-primary{
+      background:#007bff;
+      color:#fff;
+    }
+    .card{
+      background:#2A2A2A; /* Um pouco mais claro que o fundo para contraste */
+      border-radius:12px;
+      padding:12px;
+      box-shadow:0 6px 18px rgba(0,0,0,.6);
+      margin-bottom:15px;
+    }
+    .app-list, .user-list, .revenue-list{
+      margin-top:20px;
+    }
+    .app-item, .user-item, .revenue-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px;
+      border-bottom:1px solid #3A3A3A;
+    }
+    .app-info, .user-info, .revenue-info{
+      flex:1;
+    }
+    .app-actions, .user-actions, .revenue-actions{
+      display:flex;
+      gap:10px;
+    }
+    .status-pending{
+      color:#FF8C00;
+      font-weight:bold;
+    }
+    .status-approved{
+      color:#28a745;
+      font-weight:bold;
+    }
+    .role-admin{
+      color:#007bff;
+      font-weight:bold;
+    }
+    .role-user{
+      color:#CCCCCC;
+    }
+    .notification {
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+      display: none;
+    }
+    .notification.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .notification.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #3A3A3A;
+    }
+    .tab {
+      padding: 10px 20px;
+      background: #2A2A2A;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      margin-right: 5px;
+      border: 1px solid #3A3A3A;
+      border-bottom: none;
+    }
+    .tab.active {
+      background: #FF8C00;
+      color: #1C1C1C;
+      border-color: #FF8C00;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .search-box {
+      margin-bottom: 15px;
+    }
+    .search-box input {
+      padding: 8px;
+      width: 300px;
+      border-radius: 4px;
+      border: 1px solid #3A3A3A;
+      background: #2A2A2A;
+      color: #FFFFFF;
+    }
+    .revenue-summary {
+      background: #3A3A3A;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .revenue-summary div {
+      margin: 5px 0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1>Painel de Administração</h1>
+      <a href="/" class="btn">Voltar para Loja</a>
+    </div>
+    
+    <!-- Notifications -->
+    <div id="notification" class="notification"></div>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('pending')">Apps Pendentes</div>
+      <div class="tab" onclick="showTab('approved')">Apps Aprovados</div>
+      <div class="tab" onclick="showTab('users')">Usuários</div>
+      <div class="tab" onclick="showTab('revenue')">Receitas</div>
+    </div>
+    
+    <!-- Pending Apps Tab -->
+    <div id="pending" class="tab-content active">
+      <h2>Apps Pendentes de Aprovação</h2>
+      <div class="search-box">
+        <input type="text" id="pendingSearch" placeholder="Buscar apps pendentes..." onkeyup="filterPendingApps()">
+      </div>
+      <div id="pendingAppsList" class="app-list">
+        <p>Carregando apps pendentes...</p>
+      </div>
+    </div>
+    
+    <!-- Approved Apps Tab -->
+    <div id="approved" class="tab-content">
+      <h2>Apps Aprovados</h2>
+      <div class="search-box">
+        <input type="text" id="approvedSearch" placeholder="Buscar apps aprovados..." onkeyup="filterApprovedApps()">
+      </div>
+      <div id="approvedAppsList" class="app-list">
+        <p>Carregando apps aprovados...</p>
+      </div>
+    </div>
+    
+    <!-- Users Tab -->
+    <div id="users" class="tab-content">
+      <h2>Gerenciamento de Usuários</h2>
+      <div class="search-box">
+        <input type="text" id="usersSearch" placeholder="Buscar usuários..." onkeyup="filterUsers()">
+      </div>
+      <div id="usersList" class="user-list">
+        <p>Carregando usuários...</p>
+      </div>
+    </div>
+    
+    <!-- Revenue Tab -->
+    <div id="revenue" class="tab-content">
+      <h2>Relatório de Receitas</h2>
+      <div class="revenue-summary">
+        <div>Receita Total Acumulada: <span id="totalRevenue">R$ 0.00</span></div>
+        <div>Participação do Administrador (30%): <span id="adminShare">R$ 0.00</span></div>
+        <div>Participação dos Desenvolvedores (70%): <span id="developerShare">R$ 0.00</span></div>
+        <div>Total de Downloads: <span id="totalDownloads">0</span></div>
+      </div>
+      <h3>Receitas por Desenvolvedor</h3>
+      <div class="search-box">
+        <input type="text" id="revenueSearch" placeholder="Buscar desenvolvedores..." onkeyup="filterRevenue()">
+      </div>
+      <div id="revenueList" class="revenue-list">
+        <p>Carregando dados de receita...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/login.html';
+    }
+
+    // Show notification function
+    function showNotification(message, type) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = 'notification ' + type;
+      notification.style.display = 'block';
+      
+      // Hide notification after 5 seconds
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 5000);
+    }
+
+    // Tab switching function
+    function showTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      document.getElementById(tabName).classList.add('active');
+      
+      // Add active class to clicked tab (assuming the event is available)
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
+      
+      // Load data for the selected tab
+      if (tabName === 'pending') {
+        loadPendingApps();
+      } else if (tabName === 'approved') {
+        loadApprovedApps();
+      } else if (tabName === 'users') {
+        loadUsers();
+      } else if (tabName === 'revenue') {
+        loadRevenueData();
+      }
+    }
+
+    // Filter functions
+    function filterPendingApps() {
+      const searchValue = document.getElementById('pendingSearch').value.toLowerCase();
+      const cards = document.querySelectorAll('#pendingAppsList .card');
+      
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchValue) ? 'block' : 'none';
+      });
+    }
+
+    function filterApprovedApps() {
+      const searchValue = document.getElementById('approvedSearch').value.toLowerCase();
+      const cards = document.querySelectorAll('#approvedAppsList .card');
+      
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchValue) ? 'block' : 'none';
+      });
+    }
+
+    function filterUsers() {
+      const searchValue = document.getElementById('usersSearch').value.toLowerCase();
+      const cards = document.querySelectorAll('#usersList .card');
+      
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchValue) ? 'block' : 'none';
+      });
+    }
+
+    function filterRevenue() {
+      const searchValue = document.getElementById('revenueSearch').value.toLowerCase();
+      const cards = document.querySelectorAll('#revenueList .card');
+      
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchValue) ? 'block' : 'none';
+      });
+    }
+
+    async function loadPendingApps() {
+      try {
+        const res = await fetch('/api/apps/pending', {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        
+        if (!res.ok) {
+          if (res.status === 403) {
+            showNotification('Acesso negado. Você não tem permissão para acessar esta área.', 'error');
+            return;
+          }
+          throw new Error('Não autorizado');
+        }
+        
+        const apps = await res.json();
+        const appsList = document.getElementById('pendingAppsList');
+        
+        if (apps.length === 0) {
+          appsList.innerHTML = '<p>Nenhum app pendente de aprovação.</p>';
+          return;
+        }
+        
+        appsList.innerHTML = apps.map(app => {
+          // Check if app has an icon
+          const iconHtml = app.icon ? `<img src="/uploads/${app.icon}" alt="Ícone do App" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; float: right; margin: 0 0 10px 10px;">` : '';
+          return `
+          <div class="card">
+            <div class="app-item">
+              ${iconHtml}
+              <div class="app-info">
+                <h3>${app.title}</h3>
+                <div>Plataforma: ${app.platform}</div>
+                <div>Enviado por: ${app.ownerEmail}</div>
+                <div>Enviado em: ${new Date(app.createdAt).toLocaleString()}</div>
+                <div>Preço: ${app.price === 0 ? 'Grátis' : 'R$ ' + app.price.toFixed(2)}</div>
+                <div>Status: <span class="status-pending">Pendente</span></div>
+              </div>
+              <div class="app-actions">
+                <button class="btn btn-success" onclick="approveApp('${app.id}')">Aprovar</button>
+                <button class="btn btn-danger" onclick="deleteApp('${app.id}')">Excluir</button>
+              </div>
+            </div>
+            <div style="margin-top:10px">
+              <p><strong>Descrição:</strong> ${app.description}</p>
+            </div>
+          </div>
+        `;}).join('');
+      } catch (error) {
+        console.error('Erro ao carregar apps pendentes:', error);
+        document.getElementById('pendingAppsList').innerHTML = '<p>Erro ao carregar apps. Faça login novamente.</p>';
+      }
+    }
+
+    async function loadApprovedApps() {
+      try {
+        const res = await fetch('/api/apps', {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        
+        if (!res.ok) {
+          if (res.status === 403) {
+            showNotification('Acesso negado. Você não tem permissão para acessar esta área.', 'error');
+            return;
+          }
+          throw new Error('Não autorizado');
+        }
+        
+        const apps = await res.json();
+        const appsList = document.getElementById('approvedAppsList');
+        
+        if (apps.length === 0) {
+          appsList.innerHTML = '<p>Nenhum app aprovado.</p>';
+          return;
+        }
+        
+        appsList.innerHTML = apps.map(app => {
+          // Check if app has an icon
+          const iconHtml = app.icon ? `<img src="/uploads/${app.icon}" alt="Ícone do App" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; float: right; margin: 0 0 10px 10px;">` : '';
+          return `
+          <div class="card">
+            <div class="app-item">
+              ${iconHtml}
+              <div class="app-info">
+                <h3>${app.title}</h3>
+                <div>Plataforma: ${app.platform}</div>
+                <div>Enviado por: ${app.ownerEmail}</div>
+                <div>Enviado em: ${new Date(app.createdAt).toLocaleString()}</div>
+                <div>Preço: ${app.price === 0 ? 'Grátis' : 'R$ ' + app.price.toFixed(2)}</div>
+                <div>Status: <span class="status-approved">Aprovado</span></div>
+              </div>
+              <div class="app-actions">
+                <button class="btn btn-danger" onclick="deleteApp('${app.id}')">Excluir</button>
+              </div>
+            </div>
+            <div style="margin-top:10px">
+              <p><strong>Descrição:</strong> ${app.description}</p>
+            </div>
+          </div>
+        `;}).join('');
+      } catch (error) {
+        console.error('Erro ao carregar apps aprovados:', error);
+        document.getElementById('approvedAppsList').innerHTML = '<p>Erro ao carregar apps. Faça login novamente.</p>';
+      }
+    }
+
+    async function loadUsers() {
+      try {
+        const res = await fetch('/api/users', {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        
+        if (!res.ok) {
+          if (res.status === 403) {
+            showNotification('Acesso negado. Você não tem permissão para acessar esta área.', 'error');
+            return;
+          }
+          throw new Error('Não autorizado');
+        }
+        
+        const users = await res.json();
+        const usersList = document.getElementById('usersList');
+        
+        if (users.length === 0) {
+          usersList.innerHTML = '<p>Nenhum usuário cadastrado.</p>';
+          return;
+        }
+        
+        usersList.innerHTML = users.map(user => `
+          <div class="card">
+            <div class="user-item">
+              <div class="user-info">
+                <h3>${user.name}</h3>
+                <div>E-mail: ${user.email}</div>
+                <div>Registrado em: ${new Date(user.createdAt).toLocaleString()}</div>
+                <div>Função: <span class="${user.role === 'admin' ? 'role-admin' : 'role-user'}">${user.role === 'admin' ? 'Administrador' : 'Usuário'}</span></div>
+              </div>
+              <div class="user-actions">
+                ${user.role !== 'admin' ? `<button class="btn btn-primary" onclick="makeAdmin('${user.id}')">Tornar Admin</button>` : ''}
+                <button class="btn btn-danger" onclick="deleteUser('${user.id}')">Excluir</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+        document.getElementById('usersList').innerHTML = '<p>Erro ao carregar usuários. Faça login novamente.</p>';
+      }
+    }
+
+    async function loadRevenueData() {
+      try {
+        // Buscar dados reais do backend
+        const res = await fetch('/api/revenue', {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        
+        if (!res.ok) {
+          throw new Error('Erro ao buscar dados de receita');
+        }
+        
+        const data = await res.json();
+        
+        // Atualizar resumo de receita
+        document.getElementById('totalRevenue').textContent = 'R$ ' + data.total.revenue.toFixed(2);
+        document.getElementById('adminShare').textContent = 'R$ ' + data.total.adminShare.toFixed(2);
+        document.getElementById('developerShare').textContent = 'R$ ' + data.total.developerShare.toFixed(2);
+        document.getElementById('totalDownloads').textContent = data.total.downloads;
+        
+        // Atualizar lista de desenvolvedores
+        const revenueList = document.getElementById('revenueList');
+        if (data.developers.length === 0) {
+          revenueList.innerHTML = '<p>Nenhum desenvolvedor encontrado.</p>';
+          return;
+        }
+        
+        revenueList.innerHTML = data.developers.map(dev => `
+          <div class="card">
+            <div class="revenue-item">
+              <div class="revenue-info">
+                <h3>${dev.name}</h3>
+                <div>E-mail: ${dev.email}</div>
+                <div>Apps Publicados: ${dev.appCount}</div>
+                <div>Downloads Totais: ${dev.totalDownloads}</div>
+                <div>Receita Total: R$ ${dev.totalRevenue.toFixed(2)}</div>
+                <div>Participação do Administrador (30%): R$ ${dev.adminShare.toFixed(2)}</div>
+                <div>Participação do Desenvolvedor (70%): R$ ${dev.developerShare.toFixed(2)}</div>
+              </div>
+              <div class="revenue-actions">
+                <button class="btn btn-primary" onclick="viewDeveloperDetails('${dev.id}')">Detalhes</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar dados de receita:', error);
+        document.getElementById('revenueList').innerHTML = '<p>Erro ao carregar dados de receita.</p>';
+      }
+    }
+
+    async function approveApp(appId) {
+      if (!confirm('Tem certeza que deseja aprovar este app?')) {
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/admin/approve/${appId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!res.ok) {
+          throw new Error('Erro na aprovação');
+        }
+        
+        const result = await res.json();
+        showNotification('App aprovado com sucesso!', 'success');
+        loadPendingApps(); // Recarregar a lista de pendentes
+        loadApprovedApps(); // Recarregar a lista de aprovados
+      } catch (error) {
+        console.error('Erro ao aprovar app:', error);
+        showNotification('Erro ao aprovar app. Tente novamente.', 'error');
+      }
+    }
+
+    async function makeAdmin(userId) {
+      if (!confirm('Tem certeza que deseja tornar este usuário um administrador?')) {
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/users/${userId}/make-admin`, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!res.ok) {
+          throw new Error('Erro ao promover usuário');
+        }
+        
+        const result = await res.json();
+        showNotification(result.message, 'success');
+        loadUsers(); // Recarregar a lista de usuários
+      } catch (error) {
+        console.error('Erro ao promover usuário:', error);
+        showNotification('Erro ao promover usuário a administrador. Tente novamente.', 'error');
+      }
+    }
+
+    async function deleteUser(userId) {
+      if (!confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/users/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || 'Erro ao excluir usuário');
+        }
+        
+        const result = await res.json();
+        showNotification(result.message, 'success');
+        loadUsers(); // Recarregar a lista de usuários
+      } catch (error) {
+        console.error('Erro ao excluir usuário:', error);
+        showNotification(error.message || 'Erro ao excluir usuário. Tente novamente.', 'error');
+      }
+    }
+
+    async function deleteApp(appId) {
+      if (!confirm('Tem certeza que deseja excluir este app? Esta ação não pode ser desfeita.')) {
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/apps/${appId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || 'Erro ao excluir app');
+        }
+        
+        const result = await res.json();
+        showNotification(result.message, 'success');
+        
+        // Recarregar a lista apropriada dependendo da aba atual
+        const activeTab = document.querySelector('.tab-content.active').id;
+        if (activeTab === 'pending') {
+          loadPendingApps();
+        } else if (activeTab === 'approved') {
+          loadApprovedApps();
+        }
+      } catch (error) {
+        console.error('Erro ao excluir app:', error);
+        showNotification(error.message || 'Erro ao excluir app. Tente novamente.', 'error');
+      }
+    }
+
+    function viewDeveloperDetails(developerId) {
+      showNotification('Funcionalidade de detalhes do desenvolvedor não implementada neste exemplo.', 'error');
+    }
+
+    // Load pending apps when page loads
+    loadPendingApps();
+  </script>
+</body>
+</html>

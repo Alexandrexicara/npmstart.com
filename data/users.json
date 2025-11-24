@@ -1,0 +1,34 @@
+[
+  {
+    "id": "e58fb669-5ea7-457a-905d-96c0f014d955",
+    "name": "Celio47",
+    "email": "santossilvac992@gmail.com@npmstart.com",
+    "passwordHash": "$2b$10$dy7yGiUELsZyMD8eMP5Ph.yuehXyycWTVVRYzTegI4T4GWr96wTYC",
+    "role": "user",
+    "createdAt": "2025-11-13T21:19:32.342Z"
+  },
+  {
+    "id": "0cc43ba1-e052-4a23-8980-5293008cdc04",
+    "name": "Celio47",
+    "email": "celiosanto@npmstart.com",
+    "passwordHash": "$2b$10$RU.l2Qw9eREiKdc3CnZ9VOMRrSihaoHKKBqZ77cTaY2CydjKASuaa",
+    "role": "user",
+    "createdAt": "2025-11-13T21:20:37.043Z"
+  },
+  {
+    "id": "8fe4f962-b2c7-4852-a458-aa3b1b934a71",
+    "name": "Célio",
+    "email": "celio@npmstart.com",
+    "passwordHash": "$2b$10$7pJJ47tp/hwhW7/JipB5VO0OuWp3Jck7M0r0noz3R03VmiXrCaAGq",
+    "role": "user",
+    "createdAt": "2025-11-13T23:02:53.650Z"
+  },
+  {
+    "id": "14974b06-7e33-4428-bdcd-3bccdd3404c8",
+    "name": "Célio santos silva",
+    "email": "silva@npmstart.com",
+    "passwordHash": "$2b$10$Pl2i5CSlZi/.D9pukHNLQOXxJ2q10ZWKVPlw5BOzMMdUJ8daLkAa.",
+    "role": "user",
+    "createdAt": "2025-11-15T21:50:22.189Z"
+  }
+]

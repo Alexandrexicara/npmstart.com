@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Retorno de Pagamento - npm-start.com</title>
+
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      margin:0;
+      background:#1C1C1C; /* Cor Primária (Fundo Escuro) */
+      color:#FFFFFF; /* Cor de Texto Principal */
+    }
+    .container{
+      max-width:900px;
+      margin:20px auto;
+      padding:18px;
+      text-align: center;
+    }
+    .btn{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:8px;
+      background:#FF8C00; /* Cor de Destaque (Laranja) */
+      color:#1C1C1C; /* Cor Primária (Fundo Escuro) para texto do botão */
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+    }
+    .notification {
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+      display: none;
+    }
+    .notification.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .notification.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .processing {
+      font-size: 18px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Processando seu pagamento...</h1>
+  
+  <div class="processing">
+    <p>Estamos verificando o status do seu pagamento. Por favor, aguarde...</p>
+    <div id="spinner">⏳</div>
+  </div>
+  
+  <!-- Notifications -->
+  <div id="notification" class="notification"></div>
+  
+  <div id="result" style="display: none;">
+    <p id="resultMessage"></p>
+    <a id="downloadLink" class="btn" style="display: none;">Baixar App</a>
+    <a href="/" class="btn">Voltar para a Loja</a>
+  </div>
+</div>
+
+<script>
+// Show notification function
+function showNotification(message, type) {
+  const notification = document.getElementById('notification');
+  notification.textContent = message;
+  notification.className = 'notification ' + type;
+  notification.style.display = 'block';
+  
+  // Hide notification after 5 seconds
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 5000);
+}
+
+// Função para mostrar mensagem de processamento
+async function showProcessingMessage() {
+  // Ocultar a mensagem de processamento após alguns segundos
+  setTimeout(() => {
+    document.querySelector('.processing').style.display = 'none';
+    
+    // Mostrar mensagem de espera
+    document.getElementById('result').style.display = 'block';
+    document.getElementById('resultMessage').textContent = '⏳ Aguardando confirmação do pagamento...';
+    document.getElementById('resultMessage').style.color = '#FF8C00';
+    
+    // Mostrar mensagem de instrução
+    const instruction = document.createElement('p');
+    instruction.textContent = 'Você receberá um e-mail com o link para download assim que o pagamento for confirmado.';
+    instruction.style.marginTop = '10px';
+    instruction.style.fontSize = '14px';
+    instruction.style.color = '#666';
+    document.getElementById('result').appendChild(instruction);
+  }, 5000);
+}
+
+// Mostrar mensagem de processamento quando a página carrega
+window.addEventListener('DOMContentLoaded', showProcessingMessage);
+</script>
+
+</body>
+</html>

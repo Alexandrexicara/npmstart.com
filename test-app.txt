@@ -1,0 +1,1 @@
+This is a test app file for payment integration testing.

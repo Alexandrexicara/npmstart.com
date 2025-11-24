@@ -1,0 +1,55 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Caixa de Entrada - npm-start.com</title>
+<style>body{font-family:Arial,Helvetica,sans-serif;background:#1C1C1C;color:#FFFFFF}.wrap{max-width:1000px;margin:20px auto}.top{display:flex;justify-content:space-between;align-items:center}.btn{background:#FF8C00;color:#1C1C1C;padding:8px 12px;border-radius:6px;text-decoration:none}.mail-list{margin-top:14px}.mail-item{background:#2A2A2A;padding:10px;border-radius:8px;margin-bottom:8px}</style></head><body>
+<div class="wrap">
+  <div class="top"><h2>Caixa de Entrada</h2><div><button id="composeBtn" class="btn">Nova mensagem</button></div></div>
+  <div id="ads" style="margin:10px 0;padding:15px;background:linear-gradient(135deg, #2A2A2A 0%, #3A3A3A 100%);border:2px solid #FF8C00;border-radius:8px;text-align:center">
+    <h4 style="color:#FF8C00;margin:0 0 10px 0;font-size:16px">🌟 Parceiros Comerciais</h4>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <a href="https://otieu.com/4/9241921" target="_blank" rel="noopener noreferrer" style="padding:8px 15px;background:#FF8C00;color:#1C1C1C;text-decoration:none;border-radius:6px;font-weight:600">Ofertas 1</a>
+      <a href="https://otieu.com/4/9241941" target="_blank" rel="noopener noreferrer" style="padding:8px 15px;background:#FF8C00;color:#1C1C1C;text-decoration:none;border-radius:6px;font-weight:600">Ofertas 2</a>
+      <a href="https://otieu.com/4/9241934" target="_blank" rel="noopener noreferrer" style="padding:8px 15px;background:#FF8C00;color:#1C1C1C;text-decoration:none;border-radius:6px;font-weight:600">Ofertas 3</a>
+    </div>
+  </div>
+  <div id="mailbox" class="mail-list"></div>
+</div>
+
+<div id="compose" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#1C1C1C;border:1px solid #3A3A3A;padding:16px;border-radius:8px">
+  <h3>Nova mensagem</h3>
+  <form id="composeForm">
+    <input name="to" placeholder="para (ex: contato@gmail.com)" style="width:400px"/><br/>
+    <input name="subject" placeholder="assunto" style="width:400px"/><br/>
+    <textarea name="body" style="width:400px;height:120px"></textarea><br/>
+    <button type="submit" class="btn">Enviar</button>
+    <button type="button" id="closeCompose" class="btn" style="background:#444;color:#fff">Fechar</button>
+  </form>
+</div>
+
+<script>
+document.getElementById('composeBtn').addEventListener('click', ()=> document.getElementById('compose').style.display='block');
+document.getElementById('closeCompose').addEventListener('click', ()=> document.getElementById('compose').style.display='none');
+
+async function loadInbox(){
+  const token = localStorage.getItem('token'); 
+  if (!token) { document.getElementById('mailbox').innerHTML = '<p>Faça login para ver sua caixa.</p>'; return; }
+  const res = await fetch('/api/mail/fetch', { headers: { Authorization: 'Bearer ' + token } });
+  const j = await res.json();
+  if (!j.ok) { document.getElementById('mailbox').innerText = j.error || JSON.stringify(j); return; }
+  const mails = j.mails || [];
+  document.getElementById('mailbox').innerHTML = mails.map(m => `<div class="mail-item"><strong>${m.subject||'(sem assunto)'}</strong><div style="color:#CCCCCC">${m.from} • ${new Date(m.date).toLocaleString()}</div><div>${m.text?m.text.substring(0,300):''}</div></div>`).join('');
+}
+
+document.getElementById('composeForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const token = localStorage.getItem('token');
+  const fd = new FormData(e.target);
+  const body = { to: fd.get('to'), subject: fd.get('subject'), html: fd.get('body'), text: fd.get('body') };
+  const res = await fetch('/api/mail/send', { method:'POST', headers: { 'Content-Type':'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify(body) });
+  const j = await res.json();
+  alert(j.ok ? 'Enviado' : 'Erro: ' + (j.error || JSON.stringify(j)));
+  document.getElementById('compose').style.display='none';
+  loadInbox();
+});
+
+loadInbox();
+</script>
+</body></html>

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>npm-start.com — Loja de Apps</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icons/icon-192x192.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FF8C00">
+<meta name="description" content="Loja de aplicativos npm-start - Baixe e descubra novos apps">
+
+
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap');
+
+body{
+  font-family: 'Figtree', Arial, Helvetica, sans-serif;
+  margin:0;
+  background:#1C1C1C; /* Cor Primária (Fundo Escuro) */
+  color:#FFFFFF; /* Cor de Texto Principal */
+}
+header{
+  background:#1C1C1C; /* Usar a mesma cor de fundo para o cabeçalho */
+  padding:18px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand{
+  font-weight:700;
+  color:#FF8C00; /* Cor de Destaque (Laranja) */
+  font-size:20px;
+}
+main{ padding:18px }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:14px;
+}
+.card{
+  background:#2A2A2A; /* Um pouco mais claro que o fundo para contraste */
+  border-radius:12px;
+  padding:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.6);
+}
+.btn{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:8px;
+  background:#FF8C00; /* Cor de Destaque (Laranja) */
+  color:#1C1C1C; /* Cor Primária (Fundo Escuro) para texto do botão */
+  text-decoration:none;
+  font-weight:600;
+}
+.login{
+  color:#FF8C00; /* Cor de Destaque (Laranja) */
+  text-decoration:none;
+  margin-right:10px;
+}
+.ad-banner{
+  background: linear-gradient(135deg, #2A2A2A 0%, #3A3A3A 100%); /* Fundo mais claro que o body */
+  border: 2px solid #FF8C00; /* Cor de Destaque (Laranja) */
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.2);
+}
+.ad-banner h3{
+  color: #FF8C00; /* Cor de Destaque (Laranja) */
+  margin-top: 0;
+  font-size: 18px;
+}
+.ad-banner p{
+  color: #CCCCCC; /* Cor de Texto Secundário */
+  margin: 10px 0;
+  font-size: 14px;
+}
+.ad-links{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+.ad-link{
+  display: inline-block;
+  padding: 10px 20px;
+  background: #FF8C00; /* Cor de Destaque (Laranja) */
+  color: #1C1C1C; /* Cor Primária (Fundo Escuro) para texto do botão */
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.ad-link:hover{
+  background: #E67E00; /* Laranja um pouco mais escuro para hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.4);
+}
+.integration-banner {
+  background: linear-gradient(135deg, #3A3A3A 0%, #4A4A4A 100%);
+  border: 2px solid #007bff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+.integration-banner h3{
+  color: #007bff;
+  margin-top: 0;
+  font-size: 18px;
+}
+.integration-banner p{
+  color: #CCCCCC;
+  margin: 10px 0;
+  font-size: 14px;
+}
+.integration-link{
+  display: inline-block;
+  padding: 10px 20px;
+  background: #007bff;
+  color: #FFFFFF;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.integration-link:hover{
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+/* Social sharing styles */
+.social-share-small {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #3A3A3A;
+}
+.social-share-small span {
+  font-size: 12px;
+  color: #CCCCCC;
+  display: block;
+  margin-bottom: 5px;
+}
+.social-buttons-small {
+  display: flex;
+  gap: 5px;
+}
+.social-button-small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.social-button-small:hover {
+  transform: scale(1.1);
+}
+.whatsapp-small { background-color: #25D366; color: white; }
+.facebook-small { background-color: #4267B2; color: white; }
+.twitter-small { background-color: #1DA1F2; color: white; }
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="brand">npm-start.com</div>
+  <nav>
+    <a href="/mailbox.html" class="login">Mail</a>
+    <a href="/admin.html" class="login">Admin</a>
+    <a href="/register.html" class="login">Criar conta</a>
+    <a href="/login.html" class="login">Entrar</a>
+    <a href="/upload.html" style="color:#FF8C00;text-decoration:none">Enviar app</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Loja de Apps — Lista pública</h1>
+  
+  <!-- Banner de Integração para Desenvolvedores -->
+  <div class="integration-banner">
+    <h3>🚀 Para Desenvolvedores</h3>
+    <p>Integre anúncios e rastreie receitas em seus apps com nosso pacote de integração</p>
+    <div class="ad-links">
+      <a href="/developer.html" class="integration-link">Guia para Desenvolvedores</a>
+      <a href="/integration/integration_template.html" target="_blank" class="integration-link">Ver Documentação de Integração</a>
+      <a href="/integration/AdManager.js" download class="integration-link">Baixar AdManager.js</a>
+      <a href="/integration/ProfitTracker.js" download class="integration-link">Baixar ProfitTracker.js</a>
+    </div>
+  </div>
+  
+  <!-- Banner de Anúncios -->
+  <div class="ad-banner">
+    <h3>🌟 Parceiros Comerciais</h3>
+    <p>Explore produtos e fornecedores de todo o mundo com nossos parceiros</p>
+    <div class="ad-links">
+      <a href="https://otieu.com/4/9241921" target="_blank" rel="noopener noreferrer" class="ad-link">Ver Ofertas 1</a>
+      <a href="https://otieu.com/4/9241941" target="_blank" rel="noopener noreferrer" class="ad-link">Ver Ofertas 2</a>
+      <a href="https://otieu.com/4/9241934" target="_blank" rel="noopener noreferrer" class="ad-link">Ver Ofertas 3</a>
+    </div>
+  </div>
+
+  <section id="apps" class="grid"></section>
+</main>
+
+<script>
+// Função para gerar links de compartilhamento social
+function getSocialShareLinks(appTitle, appUrl) {
+  const text = `Confira este app incrível: ${appTitle}`;
+  
+  return `
+    <div class="social-share-small">
+      <span>Compartilhar:</span>
+      <div class="social-buttons-small">
+        <a href="https://wa.me/?text=${encodeURIComponent(text + ' ' + appUrl)}" 
+           class="social-button-small whatsapp-small" 
+           target="_blank" rel="noopener noreferrer" 
+           title="Compartilhar no WhatsApp">W</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}&quote=${encodeURIComponent(text)}" 
+           class="social-button-small facebook-small" 
+           target="_blank" rel="noopener noreferrer" 
+           title="Compartilhar no Facebook">f</a>
+        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(appUrl)}" 
+           class="social-button-small twitter-small" 
+           target="_blank" rel="noopener noreferrer" 
+           title="Compartilhar no Twitter">t</a>
+      </div>
+    </div>
+  `;
+}
+
+async function load(){
+  const res = await fetch('/api/apps');
+  const apps = await res.json();
+
+  const el = document.getElementById('apps');
+
+  if (!apps.length){
+    el.innerHTML = '<p>Nenhum app publicado ainda.</p>';
+    return;
+  }
+
+  el.innerHTML = apps.map(a => {
+    const appUrl = `${window.location.origin}/app.html?id=${a.id}`;
+    // Check if app has an icon
+    const iconHtml = a.icon ? `<img src="/uploads/${a.icon}" alt="Ícone do App" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; float: right; margin: 0 0 10px 10px;">` : '';
+    return `
+      <div class="card">
+        ${iconHtml}
+        <h3>${a.title}</h3>
+        <div style="color:#CCCCCC">${a.platform} • ${new Date(a.createdAt).toLocaleString()}</div>
+        <p>${a.description}</p>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <a class="btn" href="/download/${a.filename}">Baixar</a>
+          <a class="btn" href="/app.html?id=${a.id}">Ver detalhes</a>
+        </div>
+        ${getSocialShareLinks(a.title, appUrl)}
+      </div>
+    `;
+  }).join('');
+}
+
+load();
+</script>
+
+<script>
+// Registrar o Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker registrado com sucesso:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('Falha ao registrar o Service Worker:', error);
+      });
+  });
+}
+</script>
+
+</body>
+</html>
