@@ -308,10 +308,17 @@ app.post('/api/pay/:appId', authMiddleware, async (req, res) => {
           quantity: 1,
           unit_amount: Math.round(amount * 100) // Valor em centavos
         }
-      ],
-      notification_urls: [`${siteUrl}/api/webhook/pagbank`],
-      redirect_url: `${siteUrl}/payment-return.html`
+      ]
     };
+    
+    // Adicionar URLs de notificação e redirecionamento apenas se não estivermos em localhost
+    // O PagBank não aceita URLs locais para esses campos
+    if (!siteUrl.includes('localhost') && !siteUrl.includes('127.0.0.1')) {
+      checkoutData.notification_urls = [
+        `${siteUrl}/api/webhook/pagbank`
+      ];
+      checkoutData.redirect_url = `${siteUrl}/payment-return.html`;
+    }
     
     console.log('Enviando dados para o PagBank (com URLs):', JSON.stringify(checkoutData, null, 2));
     console.log('URL base:', siteUrl);
@@ -547,6 +554,61 @@ app.post('/api/webhook/pagbank', express.raw({type: 'application/json'}), async 
   }
 });
 
+
+// Rotas para desenvolvedores
+// Route to get developer's own apps
+app.get('/api/developer/apps', authMiddleware, async (req, res) => {
+  try {
+    const apps = await dbAll('SELECT * FROM apps WHERE ownerEmail = ? ORDER BY createdAt DESC', [req.user.email]);
+    res.json(apps);
+  } catch(e) {
+    console.error('Error fetching developer apps:', e);
+    res.status(500).json({ error: 'Erro ao buscar apps do desenvolvedor' });
+  }
+});
+
+// Route to get developer's revenue data
+app.get('/api/developer/revenue', authMiddleware, async (req, res) => {
+  try {
+    // Get developer's apps
+    const apps = await dbAll('SELECT * FROM apps WHERE ownerEmail = ?', [req.user.email]);
+    
+    let totalRevenue = 0;
+    let totalAdminShare = 0;
+    let totalDeveloperShare = 0;
+    let totalDownloads = 0;
+    
+    apps.forEach(app => {
+      totalRevenue += (app.totalRevenue || 0);
+      totalAdminShare += (app.adminShare || 0);
+      totalDeveloperShare += (app.developerShare || 0);
+      totalDownloads += (app.downloadCount || 0);
+    });
+    
+    // Get developer's user data for overall stats
+    const developer = await dbGet('SELECT totalRevenue, adminShare, developerShare FROM users WHERE email = ?', [req.user.email]);
+    
+    res.json({ 
+      ok: true,
+      apps: apps,
+      appCount: apps.length,
+      total: {
+        revenue: totalRevenue,
+        adminShare: totalAdminShare,
+        developerShare: totalDeveloperShare,
+        downloads: totalDownloads
+      },
+      overall: {
+        totalRevenue: developer ? developer.totalRevenue : 0,
+        adminShare: developer ? developer.adminShare : 0,
+        developerShare: developer ? developer.developerShare : 0
+      }
+    });
+  } catch(e) {
+    console.error('Error fetching developer revenue data:', e);
+    res.status(500).json({ error: 'Erro ao buscar dados de receita do desenvolvedor' });
+  }
+});
 
 // =======================
 // START SERVER

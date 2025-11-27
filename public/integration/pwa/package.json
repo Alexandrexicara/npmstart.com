@@ -1,0 +1,24 @@
+{
+  "name": "npm-start-pwa-template",
+  "version": "1.0.0",
+  "description": "Template de PWA para apps npm-start",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "pwa",
+    "npm-start",
+    "progressive-web-app",
+    "template"
+  ],
+  "author": "npm-start.com",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

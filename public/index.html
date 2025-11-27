@@ -9,9 +9,7 @@
 <meta name="theme-color" content="#FF8C00">
 <meta name="description" content="Loja de aplicativos npm-start - Baixe e descubra novos apps">
 
-
 <style>
-
   @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap');
 
 body{
@@ -133,6 +131,13 @@ main{ padding:18px }
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
 }
+.integration-links{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
 /* Social sharing styles */
 .social-share-small {
   margin-top: 10px;
@@ -167,6 +172,76 @@ main{ padding:18px }
 .whatsapp-small { background-color: #25D366; color: white; }
 .facebook-small { background-color: #4267B2; color: white; }
 .twitter-small { background-color: #1DA1F2; color: white; }
+/* Estilos para o modal de pagamento */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+}
+.modal-content {
+  background-color: #2A2A2A;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.6);
+}
+.close {
+  color: #FF8C00;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover {
+  color: #FFA500;
+}
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.payment-form input, .payment-form select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #3A3A3A;
+  background: #1C1C1C;
+  color: #FFFFFF;
+}
+.payment-form button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #FF8C00;
+  color: #1C1C1C;
+  font-weight: 600;
+  cursor: pointer;
+}
+.payment-form button:hover {
+  background: #FFA500;
+}
+.payment-message {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+.payment-message.success {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid #4CAF50;
+  color: #4CAF50;
+}
+.payment-message.error {
+  background: rgba(244, 67, 54, 0.2);
+  border: 1px solid #F44336;
+  color: #F44336;
+}
 </style>
 
 </head>
@@ -190,9 +265,11 @@ main{ padding:18px }
   <div class="integration-banner">
     <h3>🚀 Para Desenvolvedores</h3>
     <p>Integre anúncios e rastreie receitas em seus apps com nosso pacote de integração</p>
-    <div class="ad-links">
+    <div class="integration-links">
       <a href="/developer.html" class="integration-link">Guia para Desenvolvedores</a>
       <a href="/integration/integration_template.html" target="_blank" class="integration-link">Ver Documentação de Integração</a>
+      <!-- Botão atualizado para usar o processo de pagamento -->
+      <button id="buyDeveloperPackage" class="integration-link">Comprar Pacote para Desenvolvedores (R$ 20,00)</button>
       <a href="/integration/AdManager.js" download class="integration-link">Baixar AdManager.js</a>
       <a href="/integration/ProfitTracker.js" download class="integration-link">Baixar ProfitTracker.js</a>
     </div>
@@ -211,6 +288,20 @@ main{ padding:18px }
 
   <section id="apps" class="grid"></section>
 </main>
+
+<!-- Modal de pagamento -->
+<div id="paymentModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Comprar Pacote para Desenvolvedores</h2>
+    <p>Valor: R$ 20,00</p>
+    <div id="paymentMessage"></div>
+    <form id="paymentForm" class="payment-form">
+      <input type="hidden" id="appId" value="d3216a6f-77e9-421f-8f62-ceb824b640e1">
+      <button type="submit">Prosseguir para Pagamento</button>
+    </form>
+  </div>
+</div>
 
 <script>
 // Função para gerar links de compartilhamento social
@@ -270,6 +361,93 @@ async function load(){
 }
 
 load();
+
+// Função para mostrar mensagens de pagamento
+function showPaymentMessage(message, type) {
+  const messageElement = document.getElementById('paymentMessage');
+  messageElement.textContent = message;
+  messageElement.className = 'payment-message ' + type;
+  messageElement.style.display = 'block';
+  
+  // Esconder mensagem após 5 segundos
+  setTimeout(() => {
+    messageElement.style.display = 'none';
+  }, 5000);
+}
+
+// Função para processar o pagamento
+async function processPayment(appId) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      showPaymentMessage('Você precisa estar logado para comprar o pacote.', 'error');
+      return;
+    }
+    
+    const response = await fetch(`/api/pay/${appId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      showPaymentMessage(data.error || 'Erro ao processar pagamento.', 'error');
+      return;
+    }
+    
+    // Redirecionar para a página de pagamento do PagBank
+    if (data.paymentUrl) {
+      window.location.href = data.paymentUrl;
+    } else {
+      showPaymentMessage('Erro: URL de pagamento não disponível.', 'error');
+    }
+  } catch (error) {
+    console.error('Erro ao processar pagamento:', error);
+    showPaymentMessage('Erro ao processar pagamento: ' + error.message, 'error');
+  }
+}
+
+// Configurar modal de pagamento
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('paymentModal');
+  const btn = document.getElementById('buyDeveloperPackage');
+  const span = document.getElementsByClassName('close')[0];
+  const form = document.getElementById('paymentForm');
+  const appIdInput = document.getElementById('appId');
+  
+  // Quando o usuário clica no botão, abre o modal
+  btn.onclick = function() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Você precisa estar logado para comprar o pacote.');
+      return;
+    }
+    modal.style.display = 'block';
+  }
+  
+  // Quando o usuário clica no X, fecha o modal
+  span.onclick = function() {
+    modal.style.display = 'none';
+  }
+  
+  // Quando o usuário clica fora do modal, fecha o modal
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+  }
+  
+  // Quando o formulário é submetido
+  form.onsubmit = function(e) {
+    e.preventDefault();
+    const appId = appIdInput.value;
+    processPayment(appId);
+  }
+});
 </script>
 
 <script>
@@ -279,6 +457,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
         console.log('Service Worker registrado com sucesso:', registration.scope);
+        // Solicitar atualização imediata do service worker
+        registration.update();
       })
       .catch((error) => {
         console.log('Falha ao registrar o Service Worker:', error);

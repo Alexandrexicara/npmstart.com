@@ -16,7 +16,13 @@ document.getElementById('f').addEventListener('submit', async e => {
   const body = { name: fd.get('name'), emailLocal: fd.get('emailLocal'), password: fd.get('password') };
   const r = await fetch('/api/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
   const j = await r.json();
-  if (j.ok) { alert('Conta criada: ' + j.user.email); location.href='/login.html'; }
+  if (j.ok) { 
+    alert('Conta criada: ' + j.user.email); 
+    // Redirecionar para a página de login com os dados preenchidos
+    const loginParam = encodeURIComponent(fd.get('emailLocal'));
+    const passwordParam = encodeURIComponent(fd.get('password'));
+    location.href=`/login.html?login=${loginParam}&password=${passwordParam}`; 
+  }
   else document.getElementById('msg').innerText = j.error || JSON.stringify(j);
 });
 </script>

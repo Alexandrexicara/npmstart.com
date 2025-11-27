@@ -4,6 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Para Desenvolvedores - npm-start.com</title>
+  <link rel="icon" href="/icons/icon-192x192.svg" type="image/svg+xml">
 
   <style>
     body{
@@ -93,6 +94,76 @@
     .stat-label {
       font-size: 0.9em;
       color: #CCCCCC;
+    }
+    /* Estilos para o modal de pagamento */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+    }
+    .modal-content {
+      background-color: #2A2A2A;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 80%;
+      max-width: 500px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.6);
+    }
+    .close {
+      color: #FF8C00;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: #FFA500;
+    }
+    .payment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .payment-form input, .payment-form select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #3A3A3A;
+      background: #1C1C1C;
+      color: #FFFFFF;
+    }
+    .payment-form button {
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #FF8C00;
+      color: #1C1C1C;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .payment-form button:hover {
+      background: #FFA500;
+    }
+    .payment-message {
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .payment-message.success {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid #4CAF50;
+      color: #4CAF50;
+    }
+    .payment-message.error {
+      background: rgba(244, 67, 54, 0.2);
+      border: 1px solid #F44336;
+      color: #F44336;
     }
   </style>
 </head>
@@ -192,11 +263,105 @@
     <p><a href="/integration/AdManager.js" download class="btn">Baixar AdManager.js</a></p>
     <p><a href="/integration/ProfitTracker.js" download class="btn">Baixar ProfitTracker.js</a></p>
     <p><a href="/integration/integration_template.html" target="_blank" class="btn">Ver Template Completo</a></p>
+    <!-- Botão atualizado para usar o processo de pagamento -->
+    <p><button id="buyDeveloperPackage" class="btn" style="background-color: #2196F3;">Comprar Pacote Completo PWA (R$ 20,00)</button></p>
   </div>
   
   <div class="card">
-    <h2>5. Suporte</h2>
+    <h2>5. Transformar seu App em PWA</h2>
+    <p>Transforme seu aplicativo web em um Progressive Web App (PWA) para proporcionar uma experiência nativa aos usuários, com funcionalidades como instalação na tela inicial, funcionamento offline e notificações push.</p>
+    
+    <h3>Arquivos Necessários</h3>
+    <p>Baixe os seguintes arquivos e coloque-os na raiz do seu projeto:</p>
+    <div class="code-block">
+      &lt;!-- Arquivos necessários para PWA --&gt;<br>
+      manifest.json<br>
+      sw.js<br>
+      icons/icon-192x192.svg
+    </div>
+    
+    <h3>Configuração do Manifesto</h3>
+    <p>O arquivo <code>manifest.json</code> define como seu app aparece para o usuário:</p>
+    <div class="code-block">
+      {<br>
+      &nbsp;&nbsp;"name": "Nome do seu App",<br>
+      &nbsp;&nbsp;"short_name": "App",<br>
+      &nbsp;&nbsp;"description": "Descrição do seu app",<br>
+      &nbsp;&nbsp;"start_url": "/",<br>
+      &nbsp;&nbsp;"display": "standalone",<br>
+      &nbsp;&nbsp;"background_color": "#1C1C1C",<br>
+      &nbsp;&nbsp;"theme_color": "#FF8C00",<br>
+      &nbsp;&nbsp;"icons": [<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"src": "/icons/icon-192x192.svg",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"sizes": "192x192",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"type": "image/svg+xml"<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;]<br>
+      }
+    </div>
+    
+    <h3>Registro do Service Worker</h3>
+    <p>Adicione o seguinte código ao seu arquivo HTML principal para registrar o Service Worker:</p>
+    <div class="code-block">
+      &lt;script&gt;<br>
+      // Registrar o Service Worker para PWA<br>
+      if ('serviceWorker' in navigator) {<br>
+      &nbsp;&nbsp;window.addEventListener('load', () => {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;navigator.serviceWorker.register('/sw.js')<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then((registration) => {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log('Service Worker registrado com sucesso:', registration.scope);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.catch((error) => {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log('Falha ao registrar o Service Worker:', error);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});<br>
+      &nbsp;&nbsp;});<br>
+      }<br>
+      &lt;/script&gt;
+    </div>
+    
+    <h3>Meta Tags Adicionais</h3>
+    <p>Adicione estas meta tags ao <code>&lt;head&gt;</code> do seu HTML para melhorar a experiência do PWA:</p>
+    <div class="code-block">
+      &lt;link rel="manifest" href="/manifest.json"&gt;<br>
+      &lt;link rel="icon" href="/icons/icon-192x192.svg" type="image/svg+xml"&gt;<br>
+      &lt;meta name="theme-color" content="#FF8C00"&gt;<br>
+      &lt;meta name="description" content="Descrição do seu app"&gt;
+    </div>
+    
+    <h3>Funcionalidades do Service Worker</h3>
+    <p>Nosso Service Worker (<code>sw.js</code>) oferece as seguintes funcionalidades:</p>
+    <ul>
+      <li>Cache de páginas para funcionamento offline</li>
+      <li>Atualização automática de conteúdo</li>
+      <li>Gerenciamento eficiente de recursos</li>
+    </ul>
+    
+    <h3>Baixar Arquivos PWA</h3>
+    <p>Baixe os arquivos necessários para transformar seu app em PWA:</p>
+    <p><a href="/manifest.json" download class="btn">Baixar manifest.json</a></p>
+    <p><a href="/sw.js" download class="btn">Baixar sw.js</a></p>
+    <p><a href="/icons/icon-192x192.svg" download class="btn">Baixar Ícone SVG</a></p>
+    <p><a href="/integration/pwa/pwa-package.zip" download class="btn" style="background-color: #4CAF50;">Baixar Pacote PWA Completo (ZIP)</a></p>
+  </div>
+  
+  <div class="card">
+    <h2>6. Suporte</h2>
     <p>Se você tiver dúvidas sobre a integração, entre em contato com nossa equipe de suporte através do <a href="/mailbox.html" style="color:#FF8C00">sistema de mensagens</a>.</p>
+  </div>
+</div>
+
+<!-- Modal de pagamento -->
+<div id="paymentModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Comprar Pacote Completo PWA</h2>
+    <p>Valor: R$ 20,00</p>
+    <div id="paymentMessage"></div>
+    <form id="paymentForm" class="payment-form">
+      <input type="hidden" id="appId" value="d3216a6f-77e9-421f-8f62-ceb824b640e1">
+      <button type="submit">Prosseguir para Pagamento</button>
+    </form>
   </div>
 </div>
 
@@ -250,6 +415,12 @@
       });
       
       if (!response.ok) {
+        if (response.status === 401) {
+          // Token expirado ou inválido
+          localStorage.removeItem('token');
+          document.getElementById('developerStats').innerHTML = '<p>Sessão expirada. Por favor, faça login novamente.</p>';
+          return;
+        }
         throw new Error('Não autorizado');
       }
       
@@ -299,6 +470,12 @@
       });
       
       if (!response.ok) {
+        if (response.status === 401) {
+          // Token expirado ou inválido
+          localStorage.removeItem('token');
+          document.getElementById('developerApps').innerHTML = '<p>Sessão expirada. Por favor, faça login novamente.</p>';
+          return;
+        }
         throw new Error('Não autorizado');
       }
       
@@ -336,10 +513,95 @@
     }
   }
   
+  // Função para processar o pagamento
+  async function processPayment(appId) {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showPaymentMessage('Você precisa estar logado para comprar o pacote.', 'error');
+        return;
+      }
+      
+      const response = await fetch(`/api/pay/${appId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        showPaymentMessage(data.error || 'Erro ao processar pagamento.', 'error');
+        return;
+      }
+      
+      // Redirecionar para a página de pagamento do PagBank
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        showPaymentMessage('Erro: URL de pagamento não disponível.', 'error');
+      }
+    } catch (error) {
+      console.error('Erro ao processar pagamento:', error);
+      showPaymentMessage('Erro ao processar pagamento: ' + error.message, 'error');
+    }
+  }
+  
+  // Função para mostrar mensagens de pagamento
+  function showPaymentMessage(message, type) {
+    const messageElement = document.getElementById('paymentMessage');
+    messageElement.textContent = message;
+    messageElement.className = 'payment-message ' + type;
+    messageElement.style.display = 'block';
+    
+    // Esconder mensagem após 5 segundos
+    setTimeout(() => {
+      messageElement.style.display = 'none';
+    }, 5000);
+  }
+  
   // Carregar dados quando a página carregar
   document.addEventListener('DOMContentLoaded', function() {
     loadDeveloperStats();
     loadDeveloperApps();
+    
+    // Configurar modal de pagamento
+    const modal = document.getElementById('paymentModal');
+    const btn = document.getElementById('buyDeveloperPackage');
+    const span = document.getElementsByClassName('close')[0];
+    const form = document.getElementById('paymentForm');
+    const appIdInput = document.getElementById('appId');
+    
+    // Quando o usuário clica no botão, abre o modal
+    btn.onclick = function() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Você precisa estar logado para comprar o pacote.');
+        return;
+      }
+      modal.style.display = 'block';
+    }
+    
+    // Quando o usuário clica no X, fecha o modal
+    span.onclick = function() {
+      modal.style.display = 'none';
+    }
+    
+    // Quando o usuário clica fora do modal, fecha o modal
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+    
+    // Quando o formulário é submetido
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      const appId = appIdInput.value;
+      processPayment(appId);
+    }
   });
 </script>
 

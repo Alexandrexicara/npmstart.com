@@ -1,6 +1,9 @@
 // Service Worker para PWA
 const CACHE_NAME = 'npm-start-v1';
-const urlsToCache = [
+// Somente fazer cache em produção, não em desenvolvimento
+const shouldCache = location.hostname !== 'localhost' && location.hostname !== '127.0.0.1';
+
+const urlsToCache = shouldCache ? [
   '/',
   '/index.html',
   '/app.html',
@@ -9,10 +12,16 @@ const urlsToCache = [
   '/developer.html',
   '/admin.html',
   '/payment-return.html'
-];
+] : [];
 
 // Instalar o service worker
 self.addEventListener('install', (event) => {
+  if (!shouldCache) {
+    // Pular instalação em ambiente de desenvolvimento
+    self.skipWaiting();
+    return;
+  }
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -39,6 +48,11 @@ self.addEventListener('install', (event) => {
 
 // Intercepta as requisições e serve do cache quando possível
 self.addEventListener('fetch', (event) => {
+  if (!shouldCache) {
+    // Não interceptar requisições em ambiente de desenvolvimento
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -50,6 +64,20 @@ self.addEventListener('fetch', (event) => {
 
 // Atualiza o service worker
 self.addEventListener('activate', (event) => {
+  if (!shouldCache) {
+    // Em desenvolvimento, limpar todos os caches
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            return caches.delete(cacheName);
+          })
+        );
+      })
+    );
+    return;
+  }
+  
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => {

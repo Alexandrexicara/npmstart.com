@@ -9,6 +9,21 @@
 <p id="msg"></p>
 </div>
 <script>
+// Preencher os campos com dados da URL, se disponíveis
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const login = urlParams.get('login');
+  const password = urlParams.get('password');
+  
+  if (login) {
+    document.querySelector('input[name="emailLocal"]').value = login;
+  }
+  
+  if (password) {
+    document.querySelector('input[name="password"]').value = password;
+  }
+});
+
 document.getElementById('f').addEventListener('submit', async e => {
   e.preventDefault();
   const fd = new FormData(e.target);

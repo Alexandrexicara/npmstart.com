@@ -441,19 +441,27 @@ app.post('/api/pay/:appId', authMiddleware, async (req, res) => {
       : 'https://api.pagseguro.com';
     
     // Criar um checkout no PagBank usando a API REST diretamente
+    // Ajustando o formato dos dados conforme a documentação do PagBank
     const checkoutData = {
       reference_id: `app_purchase_${appObj.id}_${Date.now()}`.substring(0, 50), // Limitar a 50 caracteres
       items: [
         {
-          reference_id: `item_${appObj.id}`.substring(0, 50),
-          name: appObj.title,
+          name: appObj.title.substring(0, 100),
           quantity: 1,
           unit_amount: Math.round(amount * 100) // Valor em centavos
         }
-      ],
-      notification_urls: [`${process.env.SITE_URL || 'http://localhost:3000'}/api/webhook/pagbank`],
-      redirect_url: `${process.env.SITE_URL || 'http://localhost:3000'}/payment-return.html`
+      ]
     };
+    
+    // Adicionar URLs de notificação e redirecionamento apenas se não estivermos em localhost
+    // O PagBank não aceita URLs locais para esses campos
+    const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+    if (!siteUrl.includes('localhost') && !siteUrl.includes('127.0.0.1')) {
+      checkoutData.notification_urls = [
+        `${siteUrl}/api/webhook/pagbank`
+      ];
+      checkoutData.redirect_url = `${siteUrl}/payment-return.html`;
+    }
     
     // Log para debug
     console.log('Sending checkout data to PagBank:', JSON.stringify(checkoutData, null, 2));
