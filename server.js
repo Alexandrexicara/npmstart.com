@@ -160,7 +160,7 @@ app.post('/api/upload', authMiddleware, upload.any(), async (req, res) => {
     if (files.screenshots.length < 3)
       return res.status(400).json({ error: 'Envie pelo menos 3 screenshots' });
 
-    const { title = 'Sem título', description = '', price = '0', platform = 'android' } = req.body;
+    const { title = 'Sem título', description = '', price = '0', platform = 'android', website = '' } = req.body;
     const appId = uuidv4();
     const createdAt = new Date().toISOString();
 
@@ -189,7 +189,7 @@ app.post('/api/upload', authMiddleware, upload.any(), async (req, res) => {
     fs.renameSync(files.appFile.path, path.join(UPLOAD_DIR, appFilename));
 
     await dbRun(
-      'INSERT INTO apps (id, title, description, price, platform, filename, originalName, size, ownerEmail, createdAt, approved, screenshots, icon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO apps (id, title, description, price, platform, filename, originalName, size, ownerEmail, createdAt, approved, screenshots, icon, website) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         appId,
         title,
@@ -203,7 +203,8 @@ app.post('/api/upload', authMiddleware, upload.any(), async (req, res) => {
         createdAt,
         0,
         JSON.stringify(screenshotPaths),
-        iconFilename
+        iconFilename,
+        website
       ]
     );
 
@@ -236,8 +237,29 @@ app.post('/api/admin/approve/:id', adminMiddleware, async (req, res) => {
 // =======================
 // DOWNLOAD
 // =======================
+// Handle downloads for both free and paid apps
+app.get('/download/:filename', async (req, res) => {
+  const { filename } = req.params;
+
+  const file = path.join(UPLOAD_DIR, filename);
+  if (!fs.existsSync(file)) return res.status(404).send('Arquivo não encontrado');
+
+  res.download(file);
+});
+
+// Handle downloads with token for paid apps (backward compatibility)
 app.get('/download/:token/:filename', async (req, res) => {
   const { token, filename } = req.params;
+
+  const file = path.join(UPLOAD_DIR, filename);
+  if (!fs.existsSync(file)) return res.status(404).send('Arquivo não encontrado');
+
+  res.download(file);
+});
+
+// Handle downloads for free apps (backward compatibility)
+app.get('/download/free/:filename', async (req, res) => {
+  const { filename } = req.params;
 
   const file = path.join(UPLOAD_DIR, filename);
   if (!fs.existsSync(file)) return res.status(404).send('Arquivo não encontrado');

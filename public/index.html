@@ -351,7 +351,7 @@ async function load(){
         <div style="color:#CCCCCC">${a.platform} • ${new Date(a.createdAt).toLocaleString()}</div>
         <p>${a.description}</p>
         <div style="display:flex;gap:8px;margin-top:8px">
-          <a class="btn" href="/download/${a.filename}">Baixar</a>
+          <a class="btn" href="/download/${a.filename}" onclick="trackDownload('${a.id}')">Baixar</a>
           <a class="btn" href="/app.html?id=${a.id}">Ver detalhes</a>
         </div>
         ${getSocialShareLinks(a.title, appUrl)}
@@ -409,6 +409,34 @@ async function processPayment(appId) {
     console.error('Erro ao processar pagamento:', error);
     showPaymentMessage('Erro ao processar pagamento: ' + error.message, 'error');
   }
+}
+
+// Função para rastrear downloads
+async function trackDownload(appId) {
+  try {
+    // Track the download for revenue calculation
+    const token = localStorage.getItem("token");
+    if (token) {
+      await fetch(`/api/apps/${appId}/download`, {
+        method: "POST",
+        headers: { 
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        }
+      });
+    }
+    
+    // Show ad when downloading
+    showAd();
+  } catch (error) {
+    console.error("Error tracking download:", error);
+  }
+}
+
+function showAd() {
+  // In a real implementation, this would show an actual ad
+  // For now, we'll just show an alert
+  alert("Exibindo anúncio antes do download...");
 }
 
 // Configurar modal de pagamento

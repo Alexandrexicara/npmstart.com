@@ -80,6 +80,7 @@ const initDb = () => {
       developerShare REAL DEFAULT 0,
       screenshots TEXT, -- JSON array of screenshot filenames
       icon TEXT, -- Icon filename
+      website TEXT, -- Developer's website URL
       FOREIGN KEY (ownerEmail) REFERENCES users (email)
     );
   `;
@@ -140,6 +141,9 @@ const initDb = () => {
     });
     db.exec(`ALTER TABLE apps ADD COLUMN screenshots TEXT`, (err) => {
       if (err && !err.message.includes('duplicate column name')) console.error("Erro ao adicionar coluna 'screenshots'", err.message);
+    });
+    db.exec(`ALTER TABLE apps ADD COLUMN website TEXT`, (err) => {
+      if (err && !err.message.includes('duplicate column name')) console.error("Erro ao adicionar coluna 'website'", err.message);
     });
   });
 };

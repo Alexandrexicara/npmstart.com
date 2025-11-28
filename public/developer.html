@@ -502,6 +502,7 @@
           <div><strong>Receita Gerada:</strong> ${formatCurrency(app.totalRevenue || 0)}</div>
           <div><strong>Sua Participação (70%):</strong> ${formatCurrency(app.developerShare || 0)}</div>
           <div><strong>Enviado em:</strong> ${new Date(app.createdAt).toLocaleDateString('pt-BR')}</div>
+          ${app.website ? `<div><strong>Website:</strong> <a href="${app.website}" target="_blank" style="color:#FF8C00;">${app.website}</a></div>` : ''}
           ${getSocialShareLinks(app.title, appUrl)}
         </div>
       `}).join('');

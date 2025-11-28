@@ -136,13 +136,7 @@
 <div class="container">
   <a href="/" class="btn">Voltar</a>
   
-  <!-- Anúncios Laterais -->
-  <div class="ad-sidebar">
-    <h4>🛒 Ofertas Especiais</h4>
-    <a href="https://otieu.com/4/9241921" target="_blank" rel="noopener noreferrer">Ofertas Premium</a>
-    <a href="https://otieu.com/4/9241941" target="_blank" rel="noopener noreferrer">Produtos Selecionados</a>
-    <a href="https://otieu.com/4/9241934" target="_blank" rel="noopener noreferrer">Melhores Preços</a>
-  </div>
+ 
   
   <div id="info"></div>
   
@@ -231,6 +225,7 @@ async function load(){
     <h1>${a.title}</h1>
     <div style="color:#CCCCCC">Plataforma: ${a.platform} • Enviado: ${new Date(a.createdAt).toLocaleString()}</div>
     <p>${a.description}</p>
+    ${a.website ? `<p><strong>Website:</strong> <a href="${a.website}" target="_blank" style="color:#FF8C00;">${a.website}</a></p>` : ''}
     ${screenshotsHtml}
     <p>Preço: ${a.price === 0 ? "Grátis" : "R$ " + a.price.toFixed(2)}</p>
     
@@ -267,7 +262,7 @@ async function load(){
         <button id="payButton" class="btn">Comprar App (R$ ${a.price.toFixed(2)})</button>
         <div id="paymentStatus" style="margin-top: 10px;"></div>
       </div>` : 
-      `<a class="btn" href="/download/free/${a.filename}" onclick="trackDownload('${a.id}')">Baixar</a>`
+      `<a class="btn" href="/download/${a.filename}" onclick="trackDownload('${a.id}')">Baixar</a>`
     }
   `;
 

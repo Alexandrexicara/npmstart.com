@@ -345,6 +345,7 @@
                 <div>Enviado em: ${new Date(app.createdAt).toLocaleString()}</div>
                 <div>Preço: ${app.price === 0 ? 'Grátis' : 'R$ ' + app.price.toFixed(2)}</div>
                 <div>Status: <span class="status-pending">Pendente</span></div>
+                ${app.website ? `<div>Website: <a href="${app.website}" target="_blank" style="color:#FF8C00;">${app.website}</a></div>` : ''}
               </div>
               <div class="app-actions">
                 <button class="btn btn-success" onclick="approveApp('${app.id}')">Aprovar</button>
@@ -400,6 +401,7 @@
                 <div>Enviado em: ${new Date(app.createdAt).toLocaleString()}</div>
                 <div>Preço: ${app.price === 0 ? 'Grátis' : 'R$ ' + app.price.toFixed(2)}</div>
                 <div>Status: <span class="status-approved">Aprovado</span></div>
+                ${app.website ? `<div>Website: <a href="${app.website}" target="_blank" style="color:#FF8C00;">${app.website}</a></div>` : ''}
               </div>
               <div class="app-actions">
                 <button class="btn btn-danger" onclick="deleteApp('${app.id}')">Excluir</button>
