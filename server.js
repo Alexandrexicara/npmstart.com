@@ -9,7 +9,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3003;
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
 app.use(cors());
