@@ -633,6 +633,30 @@ app.get('/api/developer/revenue', authMiddleware, async (req, res) => {
 });
 
 // =======================
+// CREATE ADMIN USER
+// =======================
+// Route to create an admin user (for testing purposes only)
+app.post('/api/create-admin', async (req, res) => {
+  const { name, emailLocal, password } = req.body;
+  if (!name || !emailLocal || !password) return res.status(400).json({ error: 'Dados incompletos' });
+  const email = `${emailLocal}@npmstart.com`;
+  
+  // Check if user already exists
+  const existingUser = await dbGet('SELECT * FROM users WHERE email = ?', [email]);
+  if (existingUser) return res.status(409).json({ error: 'E-mail já existe' });
+  
+  const hash = await bcrypt.hash(password, 10);
+  const userId = uuidv4();
+  const createdAt = new Date().toISOString();
+  
+  // Insert new admin user
+  await dbRun('INSERT INTO users (id, name, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)', 
+    [userId, name, email, hash, 'admin', createdAt]);
+
+  res.json({ ok: true, message: 'Usuário administrador criado com sucesso', user: { id: userId, name: name, email: email, role: 'admin' } });
+});
+
+// =======================
 // START SERVER
 // =======================
 
